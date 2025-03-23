@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.15",
+    "@xenova/transformers": "^2.17.2",
     "tailwindcss": "^4.0.15"
   }
 }

@@ -3,11 +3,18 @@
   import Ui from "../components/ui.svelte";
   import { on } from "svelte/events";
   import { onMount } from "svelte";
+  import { pipeline } from "@xenova/transformers";
 
   let pageContent: any = {};
   let selectedText: any = "";
+  let result: any;
+  let pipe: any;
 
-  onMount(() => {
+  async function loadPipe() {
+    pipe = await pipeline("sentiment-analysis");
+  }
+  onMount(async () => {
+    await loadPipe();
     Browser.tabs
       .query({ active: true, currentWindow: true })
       .then((tabs: any[]) => {
@@ -16,11 +23,13 @@
         // Browser.tabs.sendMessage(tabs[0].id, { type: "get-page-content" });
       });
 
-    Browser.storage.local.get("text").then((data) => {
+    Browser.storage.local.get("text").then(async (data) => {
       console.log(data);
 
       if (data) {
         selectedText = data.text;
+        result = await pipe(selectedText);
+        console.log(result);
       }
     });
   });
@@ -54,6 +63,7 @@
   <p><strong>Text:</strong> {pageContent?.text}</p>
   <p><strong>Text:</strong> {pageContent?.content}</p>
   <p><strong>selectedText:</strong> {selectedText}</p>
+  <p><strong>Result:</strong> {result?.pop()?.label}</p>
   <Ui></Ui>
 </div>
 
