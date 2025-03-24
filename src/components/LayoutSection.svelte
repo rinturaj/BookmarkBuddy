@@ -1,8 +1,5 @@
 <script>
   import Footer from "./Footer.svelte";
-
-  import header from "./header.svelte";
-
   import { onMount } from "svelte";
   import { fade, slide } from "svelte/transition";
   import { quintOut } from "svelte/easing";

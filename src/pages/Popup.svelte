@@ -1,20 +1,20 @@
 <script lang="ts">
   import Browser from "webextension-polyfill";
-  import Ui from "../components/ui.svelte";
   import { on } from "svelte/events";
   import { onMount } from "svelte";
   import { pipeline } from "@xenova/transformers";
+  import LayoutSection from "../components/LayoutSection.svelte";
 
   let pageContent: any = {};
   let selectedText: any = "";
   let result: any;
-  let pipe: any;
+  // let pipe: any;
 
-  async function loadPipe() {
-    pipe = await pipeline("sentiment-analysis");
-  }
+  // async function loadPipe() {
+  //   pipe = await pipeline("summarization", "Mozilla/distilbart-cnn-12-6");
+  // }
   onMount(async () => {
-    await loadPipe();
+    // await loadPipe();
     Browser.tabs
       .query({ active: true, currentWindow: true })
       .then((tabs: any[]) => {
@@ -28,19 +28,23 @@
 
       if (data) {
         selectedText = data.text;
-        result = await pipe(selectedText);
-        console.log(result);
+        // result = await pipe(selectedText, 150, 50, false);
+        // console.log(result);
       }
     });
   });
 
-  Browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log("On Popup received:", message);
-    if (message.action === "capture_page") {
-      pageContent = message;
+  Browser.runtime.onMessage.addListener(
+    async (message, sender, sendResponse) => {
+      console.log("On Popup received:", message);
+      if (message.action === "capture_page") {
+        pageContent = message;
+        // result = await pipe(message.content, 150, 50, false);
+        // console.log(result);
+      }
+      // pageContent = message;
     }
-    // pageContent = message;
-  });
+  );
 </script>
 
 <div>
@@ -64,7 +68,7 @@
   <p><strong>Text:</strong> {pageContent?.content}</p>
   <p><strong>selectedText:</strong> {selectedText}</p>
   <p><strong>Result:</strong> {result?.pop()?.label}</p>
-  <Ui></Ui>
+  <LayoutSection></LayoutSection>
 </div>
 
 <style>

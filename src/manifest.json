@@ -2,7 +2,14 @@
   "manifest_version": 3,
   "{{chrome}}.manifest_version": 3,
   "{{firefox}}.manifest_version": 2,
-  "permissions": ["activeTab", "scripting", "storage", "tabs", "contextMenus"],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "tabs",
+    "contextMenus",
+    "sidePanel"
+  ],
   "host_permissions": ["<all_urls>"],
   "icons": {
     "16": "icon/16.png",
@@ -18,11 +25,18 @@
       "all_frames": false
     }
   ],
+  "side_panel": {
+    "default_path": "src/sidepanel/sidepanel.html"
+  },
+  "sidebar_action": {
+    "default_panel": "src/sidepanel/sidepanel.html",
+    "default_title": "My Sidebar"
+  },
   "{{chrome}}.action": {
-    "default_popup": "src/popup.html"
+    "default_popup": "src/popup/popup.html"
   },
   "{{firefox}}.browser_action": {
-    "default_popup": "src/popup.html"
+    "default_popup": "src/popup/popup.html"
   },
   "background": {
     "{{chrome}}.service_worker": "src/background.ts",

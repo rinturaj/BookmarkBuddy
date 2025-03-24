@@ -11,6 +11,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "@tsconfig/svelte": "^5.0.4",
+    "@types/chrome": "^0.0.310",
     "@types/webextension-polyfill": "^0.10.0",
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",

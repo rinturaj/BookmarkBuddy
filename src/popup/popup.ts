@@ -1,4 +1,4 @@
-import Popup from "./pages/Popup.svelte";
 import { mount } from "svelte";
+import Popup from "../pages/Popup.svelte";
 
 mount(Popup, { target: document.body });
