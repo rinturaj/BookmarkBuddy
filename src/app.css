@@ -20,7 +20,7 @@
     --accent-foreground: 202 5% 15%;
     --destructive: 0 50% 30%;
     --destructive-foreground: 202 5% 90%;
-    --border: 202 20% 50%;
+    --border: 202 15% 95%;
     --input: 202 20% 30%;
     --ring: 202 52% 42%;
     --radius: 0.75rem;
@@ -42,7 +42,7 @@
     --accent-foreground: 202 5% 90%;
     --destructive: 0 50% 30%;
     --destructive-foreground: 202 5% 90%;
-    --border: 202 20% 30%;
+    --border: 202 15% 10%;
     --input: 202 20% 30%;
     --ring: 202 52% 42%;
     --radius: 0.75rem;
