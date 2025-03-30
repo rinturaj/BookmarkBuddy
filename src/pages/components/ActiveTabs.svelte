@@ -59,11 +59,12 @@
       <Card class="p-0">
         <CardContent class="p-2">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center flex-grow min-w-0 gap-2">
               <img src={tab.favicon} alt="" class="h-[16px]" srcset="" />
-              <span class="text-sm truncate max-w-[150px]">{tab.title}</span>
+              <span class="text-sm truncate flex-grow min-w-0">{tab.title}</span
+              >
             </div>
-            <div class="flex items-center gap-1">
+            <div class="flex items-center flex-shrink-0 gap-1">
               <Button
                 on:click={() => {
                   console.log(tab.url);
