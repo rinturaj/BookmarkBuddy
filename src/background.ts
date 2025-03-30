@@ -65,3 +65,11 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
     // });
   }
 });
+
+browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  browser.runtime.sendMessage({ type: "UPDATE_TABS" });
+});
+
+browser.tabs.onRemoved.addListener(() => {
+  browser.runtime.sendMessage({ type: "UPDATE_TABS" });
+});
