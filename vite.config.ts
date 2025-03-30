@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import webExtension, { readJsonFile } from "vite-plugin-web-extension";
-import tailwindcss from "@tailwindcss/vite";
+import path from "path";
 
 function generateManifest() {
   const manifest = readJsonFile("src/manifest.json");
@@ -17,9 +17,13 @@ function generateManifest() {
 // https://vitejs.dev/config/
 export default defineConfig({
   assetsInclude: "static",
+  resolve: {
+    alias: {
+      $lib: path.resolve("./src/lib"),
+    },
+  },
   plugins: [
     svelte(),
-    tailwindcss(),
     webExtension({
       manifest: generateManifest,
       watchFilePaths: ["package.json", "manifest.json"],
