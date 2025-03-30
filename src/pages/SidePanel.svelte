@@ -45,19 +45,7 @@
   import { Toggle } from "$lib/components/ui/toggle";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import { cn } from "$lib/utils";
-
-  // Dark mode state
-  let darkMode = false;
-
-  // Toggle dark mode
-  function toggleDarkMode() {
-    darkMode = !darkMode;
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }
+  import { ModeWatcher, setMode, toggleMode } from "mode-watcher";
 
   // Active state management
   let activeTab = "capture"; // Options: 'capture', 'ai', 'notes'
@@ -174,9 +162,9 @@
   }
 </script>
 
-<div
-  class={`flex flex-col h-full w-full max-w-md bg-background ${darkMode ? "dark" : ""}`}
->
+<ModeWatcher />
+
+<div class={`flex flex-col h-full w-full max-w-md bg-background`}>
   <!-- Header -->
   <div class="flex items-center justify-between p-4 border-b">
     <div class="flex items-center gap-3">
@@ -188,12 +176,13 @@
       </Avatar>
       <h1 class="text-2xl font-bold">BookmarkBuddy</h1>
     </div>
-    <Button variant="ghost" size="icon" on:click={toggleDarkMode}>
-      {#if darkMode}
-        <Sun class="h-5 w-5 text-yellow-400" />
-      {:else}
-        <Moon class="h-5 w-5" />
-      {/if}
+    <Button variant="ghost" size="icon" onclick={() => toggleMode()}>
+      <Sun
+        class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+      />
+      <Moon
+        class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
+      />
     </Button>
   </div>
 
