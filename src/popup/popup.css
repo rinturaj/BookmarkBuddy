@@ -1,8 +1,7 @@
 html,
 body {
-  /* width: 400px; */
-  height: 600px;
-  padding: 0;
+  overflow: hidden !important;
+  background: white;
   margin: 0;
-  background-color: lightsalmon !important;
+  padding: 1px;
 }
