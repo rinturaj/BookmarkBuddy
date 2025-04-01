@@ -73,3 +73,23 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 browser.tabs.onRemoved.addListener(() => {
   browser.runtime.sendMessage({ type: "UPDATE_TABS" });
 });
+
+chrome.omnibox.onInputEntered.addListener(async (text, sugges) => {
+  if (text === "open") {
+    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    if (tab) {
+      await chrome.sidePanel.open({ tabId: tab?.id || 0 });
+      return;
+    }
+  }
+  let url = text.startsWith("http") ? text : `https://${text}`;
+  chrome.bookmarks.create({ title: "Quick Bookmark", url });
+});
+
+chrome.omnibox.onInputChanged.addListener((text, suggest) => {
+  suggest([
+    { content: "https://google.com", description: "🔍 Google" },
+    { content: "https://github.com", description: "💻 GitHub" },
+  ]);
+});

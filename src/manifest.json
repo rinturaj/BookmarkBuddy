@@ -20,6 +20,7 @@
     "96": "icon/96.png",
     "128": "icon/128.png"
   },
+  "omnibox": { "keyword": "bm" },
   "content_scripts": [
     {
       "matches": ["https://*/*", "http://*/*"],

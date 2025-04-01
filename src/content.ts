@@ -3,13 +3,19 @@ import Browser from "webextension-polyfill";
 console.log("Content script loaded!");
 
 // Listen for requests from popup.svelte
-Browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+Browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   console.log("Message received in content script:", message);
 
   // if (message.type === "get-page-content") {
   capturePageData();
   // sendResponse();
   // }÷
+
+  console.log(message);
+
+  if (message.action === "openSidePanel") {
+    await chrome.sidePanel.open({ tabId: message?.id || 0 });
+  }
 });
 
 if (window.location.protocol === "chrome-extension:") {
@@ -50,3 +56,29 @@ function capturePageData() {
     content: pageContent,
   });
 }
+
+// Wait for the page to fully load
+window.addEventListener("load", () => {
+  let button = document.createElement("button");
+  button.innerText = "★ Bookmark";
+  button.style.position = "fixed";
+  button.style.top = "100px";
+  button.style.right = "0px";
+  button.style.zIndex = "1000";
+  button.style.background = "#ffcc00";
+  button.style.border = "none";
+  button.style.padding = "8px 12px";
+  button.style.cursor = "pointer";
+  button.style.fontSize = "14px";
+  button.style.borderRadius = "6px";
+
+  document.body.appendChild(button);
+
+  button.addEventListener("click", () => {
+    chrome.runtime.sendMessage({
+      action: "addBookmark",
+      url: window.location.href,
+      title: document.title,
+    });
+  });
+});
