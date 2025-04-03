@@ -57,28 +57,28 @@ function capturePageData() {
   });
 }
 
-// Wait for the page to fully load
-window.addEventListener("load", () => {
-  let button = document.createElement("button");
-  button.innerText = "★ Bookmark";
-  button.style.position = "fixed";
-  button.style.top = "100px";
-  button.style.right = "0px";
-  button.style.zIndex = "1000";
-  button.style.background = "#ffcc00";
-  button.style.border = "none";
-  button.style.padding = "8px 12px";
-  button.style.cursor = "pointer";
-  button.style.fontSize = "14px";
-  button.style.borderRadius = "6px";
+// // Wait for the page to fully load
+// window.addEventListener("load", () => {
+//   let button = document.createElement("button");
+//   button.innerText = "★ Bookmark";
+//   button.style.position = "fixed";
+//   button.style.top = "100px";
+//   button.style.right = "0px";
+//   button.style.zIndex = "1000";
+//   button.style.background = "#ffcc00";
+//   button.style.border = "none";
+//   button.style.padding = "8px 12px";
+//   button.style.cursor = "pointer";
+//   button.style.fontSize = "14px";
+//   button.style.borderRadius = "6px";
 
-  document.body.appendChild(button);
+//   document.body.appendChild(button);
 
-  button.addEventListener("click", () => {
-    chrome.runtime.sendMessage({
-      action: "addBookmark",
-      url: window.location.href,
-      title: document.title,
-    });
-  });
-});
+//   button.addEventListener("click", () => {
+//     chrome.runtime.sendMessage({
+//       action: "addBookmark",
+//       url: window.location.href,
+//       title: document.title,
+//     });
+//   });
+// });

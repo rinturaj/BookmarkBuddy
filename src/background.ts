@@ -1,35 +1,12 @@
 import browser from "webextension-polyfill";
-import { pipeline } from "@xenova/transformers";
-import { env } from "@xenova/transformers";
-
-// Disable Web Workers (forces main thread processing)
-// env.allowLocalModels = true;
-// env.useBrowserCache = false;
-// env.localModelPath = "./models/";
-// env.backends.onnx.wasm.numThreads = 1; // Reduce complexity
-let pipe: any;
-
-async function loadPipe() {
-  // pipe = await pipeline("summarization", "Xenova/bart-large-cnn", {
-  //   progress_callback: (progress: any) => {
-  //     console.log("Progress", progress);
-  //   },
-  //   cache_dir: "./models",
-  // });
-  console.log("Pipeline loaded!");
-}
+console.log("Background script loaded!");
 
 browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   console.log("Message received:", message);
-  const result = await pipe(message.content);
-  console.log("Result", result);
 });
-
-console.log("Background script loaded!");
 
 // Create context menu when the extension is installed
 browser.runtime.onInstalled.addListener(async () => {
-  await loadPipe();
   browser.contextMenus.create({
     id: "sendTextToExtension",
     title: "Note selected text in Buddy",
@@ -38,7 +15,7 @@ browser.runtime.onInstalled.addListener(async () => {
   browser.contextMenus.create({
     id: "bookMarkPage",
     title: "Bookmark this page with Buddy",
-    contexts: ["selection"],
+    contexts: ["page"],
   });
 });
 

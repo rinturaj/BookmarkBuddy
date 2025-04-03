@@ -19,6 +19,7 @@
     CardHeader,
     CardTitle,
   } from "$lib/components/ui/card";
+  import Browser from "webextension-polyfill";
 
   // State management
   let isBookmarked = false; // Set to true to test the bookmarked state
@@ -123,7 +124,7 @@
   function onCancel() {}
   function onConfirm() {
     console.log("Book marked");
-    isBookmarked = !isBookmarked;
+    handleBookmark();
   }
   // Start pulse animation after component mounts
   startPulse();
@@ -150,6 +151,9 @@
           </div>
         </div>
         <Button
+          onclick={async () => {
+            window.close();
+          }}
           variant="ghost"
           size="icon"
           class="h-8 w-8 -mt-1 -mr-2 hover:rotate-90 transition-transform duration-200"
@@ -177,15 +181,27 @@
         class="hover:bg-primary/10 transition-colors duration-200"
       >
         <Plus class="h-3.5 w-3.5 mr-1" />
-        New folder
+        New Category
       </Button>
       <Button
+        onclick={async () => {
+          let [tab] = await chrome.tabs.query({
+            active: true,
+            currentWindow: true,
+          });
+
+          if (tab) {
+            await chrome.sidePanel.open({ tabId: tab?.id || 0 });
+            window.close();
+            return;
+          }
+        }}
         variant="ghost"
         size="sm"
         class="hover:bg-primary/10 transition-colors duration-200"
       >
         <Save class="h-3.5 w-3.5 mr-1" />
-        Settings
+        Sidepanel
       </Button>
     </CardFooter>
   </Card>
