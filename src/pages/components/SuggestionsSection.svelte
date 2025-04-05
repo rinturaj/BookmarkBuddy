@@ -2,15 +2,14 @@
   import { Card, CardContent } from "$lib/components/ui/card";
   import { onMount } from "svelte";
   import Browser from "webextension-polyfill";
+  import { ACTION } from "../../const";
 
   let frequentLinks: any[] = [];
 
   onMount(async () => {
     await fetchFrequentLinks();
     Browser.runtime.onMessage.addListener((message) => {
-      console.log(message);
-
-      if (message.type === "UPDATE_TABS") {
+      if (message.action === ACTION.UPDATE_TABS) {
         fetchFrequentLinks();
       }
     });

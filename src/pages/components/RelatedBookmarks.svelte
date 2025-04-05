@@ -14,7 +14,7 @@
       <Link2 class="h-4 w-4" />
       Other bookmarks from {getDomain(currentPage.url)}
     </h3>
-    <div class="space-y-2 max-h-[150px] overflow-y-auto pr-1">
+    <div class="space-y-2 pr-1">
       {#each relatedBookmarks as bookmark, i}
         <div
           class="flex items-start gap-2 p-2 hover:bg-muted rounded-md text-sm transition-all duration-200"

@@ -12,19 +12,16 @@
   export let onCancel;
 </script>
 
-<Alert class="border-primary/30 bg-primary/5">
-  <Bookmark class="h-4 w-4 text-primary" />
+<Alert
+  class="border-primary/30 mt-2 bg-primary/55 dark:bg-sidebar-accent  dark:text-primary"
+>
+  <Bookmark class="h-4 w-4 dark:text-primary" />
   <AlertTitle>Not bookmarked</AlertTitle>
   <AlertDescription>Would you like to bookmark this page?</AlertDescription>
-  <div class="flex justify-end">
+  <div class="flex justify-end mt-3">
     <Button variant="ghost" size="sm" on:click={onCancel} class="mr-2 "
       >No</Button
     >
-    <Button
-      variant="default"
-      size="sm"
-      onclick={onConfirm}
-      class=" animate-bounce">Yes</Button
-    >
+    <Button size="sm" onclick={onConfirm} class=" animate-bounce">Yes</Button>
   </div>
 </Alert>

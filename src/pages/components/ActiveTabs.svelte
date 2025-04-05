@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import Browser from "webextension-polyfill";
   import Button from "../../lib/components/ui/button/button.svelte";
+  import { ACTION } from "../../const";
 
   // Active state management
   interface Tab {
@@ -35,9 +36,7 @@
     await fetchTabs();
 
     Browser.runtime.onMessage.addListener((message) => {
-      console.log(message);
-
-      if (message.type === "UPDATE_TABS") {
+      if (message.action === ACTION.UPDATE_TABS) {
         fetchTabs();
       }
     });

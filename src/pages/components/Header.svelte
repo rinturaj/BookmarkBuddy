@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { toggleMode } from "mode-watcher";
   import {
     Avatar,

@@ -1,8 +1,9 @@
 import browser from "webextension-polyfill";
+import { ACTION } from "./const";
 console.log("Background script loaded!");
 
 browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  console.log("Message received:", message);
+  // console.log("Message received:", message);
 });
 
 // Create context menu when the extension is installed
@@ -31,24 +32,18 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
       url: tab?.url,
     });
     await chrome.sidePanel.open({ tabId: tab?.id || 0 });
-
-    // browser.action.openPopup().then((x) => {
-    //   console.log("Popup opened!", x);
-    //   browser.storage.local.set({
-    //     action: info.menuItemId,
-    //     text: info.selectionText,
-    //     url: tab?.url,
-    //   });
-    // });
   }
 });
 
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  browser.runtime.sendMessage({ type: "UPDATE_TABS" });
+  browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
 });
 
 browser.tabs.onRemoved.addListener(() => {
-  browser.runtime.sendMessage({ type: "UPDATE_TABS" });
+  browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
+});
+browser.tabs.onActivated.addListener(() => {
+  browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
 });
 
 chrome.omnibox.onInputEntered.addListener(async (text, sugges) => {

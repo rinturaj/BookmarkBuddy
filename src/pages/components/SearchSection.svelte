@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Search } from "lucide-svelte";
 
   // Import shadcn-svelte components

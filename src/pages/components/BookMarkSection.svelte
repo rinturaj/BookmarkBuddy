@@ -7,6 +7,8 @@
     Plus,
     PlusIcon,
     Check,
+    ListFilter,
+    List,
   } from "lucide-svelte";
   import * as Dialog from "$lib/components/ui/dialog/index";
   // Import shadcn-svelte components
@@ -20,6 +22,7 @@
     getOrCreateFolder,
   } from "../../script/bookmark.util";
   import { onMount } from "svelte";
+  import Badge from "../../lib/components/ui/badge/badge.svelte";
 
   let viewInput = false;
   let parentFolderId = "";
@@ -82,6 +85,7 @@
   }
   let addCategory = true;
   let categoryname = "";
+  let listCategory = false;
 </script>
 
 <!-- Bookmarks -->
@@ -89,6 +93,17 @@
   <div class="flex items-center gap-2">
     <Bookmark class="w-6 h-6" />
     <h2 class="text-xl font-bold">Bookmarks</h2>
+  </div>
+  <div>
+    <Button
+      onclick={() => {
+        listCategory = !listCategory;
+      }}
+      variant="ghost"
+      size="icon"
+    >
+      <List></List>
+    </Button>
   </div>
 </div>
 <Dialog.Root open={viewInput} onOpenChange={(x) => (viewInput = x)}>
@@ -124,12 +139,13 @@
   </Dialog.Content>
 </Dialog.Root>
 <!-- Recents -->
-<div class="flex-1 overflow-auto">
-  <ScrollArea class="whitespace-nowrap px-2 pb-2" orientation="horizontal">
-    <div class="flex space-x-2">
+<div class="flex-1">
+  <ScrollArea class="whitespace-nowrap px-2 pb-2 " orientation="horizontal">
+    <div class="flex {listCategory ? 'flex-wrap  ' : ''} space-x-1">
       <Button
-        variant="default"
-        size="sm"
+        class="flex-nowrap"
+        variant="ghost"
+        size="icon"
         onclick={() => {
           viewInput = !viewInput;
         }}
@@ -143,16 +159,15 @@
 
       {#each categories as category}
         <Button
+          class="m-1"
           variant={activeCategory === category.id ? "default" : "outline"}
           size="sm"
-          on:click={() => (activeCategory = category.id)}
         >
           {category.title}
         </Button>
       {/each}
     </div>
   </ScrollArea>
-
   <div class="px-2 mb-2">
     <h3 class="text-lg font-semibold mb-2">Recents</h3>
 

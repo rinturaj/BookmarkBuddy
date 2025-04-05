@@ -117,8 +117,15 @@ export async function getOrCreateFolder(
   return Browser.bookmarks.create({ parentId, title });
 }
 // Listen for messages from the popup
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.action === "addBookmark") {
-    createBookmarkStructure(message.url, message.title);
-  }
-});
+// chrome.runtime.onMessage.addListener((message) => {
+//   if (message.action === "addBookmark") {
+//     createBookmarkStructure(message.url, message.title);
+//   }
+// });
+
+export async function getCurrenttab() {
+  const tab = await Browser.tabs.query({ active: true, currentWindow: true });
+  console.log(tab);
+
+  return tab[0];
+}
