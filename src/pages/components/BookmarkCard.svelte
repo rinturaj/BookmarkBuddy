@@ -29,7 +29,7 @@
         </li>
       {/each}
     </ul>
-    <h6 class="text-sm font-semibold mt-2">Alternative Websites</h6>
+    <h6 class="text-sm font-semibold mt-2">Similar Websites</h6>
     <ul class=" ml-1 list-none [&>li]:mt-2">
       {#each bookmarkDetails?.alternatives as links}
         <li class="flex">

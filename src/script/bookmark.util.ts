@@ -90,11 +90,11 @@ export async function bookmarkUrl(url: string, title: any, category: string) {
   );
 
   // Find or create the domain folder inside Categories
-  let domainFolder: any = await getOrCreateFolder(domain, categoriesFolder.id);
+  // let domainFolder: any = await getOrCreateFolder(domain, categoriesFolder.id);
 
   // Create bookmark inside the domain folder
   let status = await Browser.bookmarks.create({
-    parentId: domainFolder.id,
+    parentId: categoriesFolder.id,
     title: title,
     url: url,
   });

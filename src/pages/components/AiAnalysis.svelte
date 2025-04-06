@@ -22,6 +22,7 @@
     currentPage.title = currentTab.title || "";
     const v = await Browser.storage.local.get(currentPage.url.toString());
     bookmarkDetails = v[currentPage.url.toString()];
+    isBookmarked = !!bookmarkDetails ? true : false;
   }
   // Current page info (would come from Chrome API in real extension)
   let currentPage = {
@@ -48,7 +49,6 @@
         }
         if (message.action === ACTION.UPDATE_TABS) {
           await getCurrentTabDetails();
-          isBookmarked = !!bookmarkDetails ? true : false;
         }
       }
     );
@@ -96,8 +96,6 @@
   function removeBookmark() {
     isLoading = true;
     progress = 0;
-
-    // Simulate progress
     const interval = setInterval(() => {
       progress += 5;
       if (progress >= 100) {

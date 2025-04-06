@@ -25,6 +25,7 @@
     currentPage.favicon = currentTab.favIconUrl || "";
     currentPage.url = currentTab.url || "";
     currentPage.title = currentTab.title || "";
+    const v = await Browser.storage.local.get(currentPage.url.toString());
   }
   // Current page info (would come from Chrome API in real extension)
   let currentPage = {
@@ -39,8 +40,6 @@
     await getCurrentTabDetails();
 
     Browser.runtime.onMessage.addListener(async (message) => {
-      console.log("AI Messages");
-
       if (message.action === ACTION.CAPTURE_CONTENT) {
         currentPage = message;
         console.log(message);
