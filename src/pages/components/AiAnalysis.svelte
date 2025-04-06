@@ -17,10 +17,11 @@
   export let isSideBar = false;
   async function getCurrentTabDetails() {
     currentTab = await getCurrenttab();
-    console.log(currentTab);
     currentPage.favicon = currentTab.favIconUrl || "";
     currentPage.url = currentTab.url || "";
     currentPage.title = currentTab.title || "";
+    const v = await Browser.storage.local.get(currentPage.url.toString());
+    bookmarkDetails = v[currentPage.url.toString()];
   }
   // Current page info (would come from Chrome API in real extension)
   let currentPage = {
@@ -47,6 +48,7 @@
         }
         if (message.action === ACTION.UPDATE_TABS) {
           await getCurrentTabDetails();
+          isBookmarked = !!bookmarkDetails ? true : false;
         }
       }
     );
@@ -74,6 +76,8 @@
       const jsonString = jsonMatch[0];
       const jsonObject = JSON.parse(jsonString);
       bookmarkDetails = jsonObject;
+      let value = { [currentPage.url]: bookmarkDetails }; // Use computed property name
+      await Browser.storage.local.set(value);
     }
     await bookmarkUrl(
       currentPage.url,
@@ -152,8 +156,8 @@
   <LoadingIndicator {isLoading} {progress} {isBookmarked} />
   <SuccessAlert {showSuccess} />
   {#if isBookmarked}
-    <BookmarkCard {currentPage} {bookmarkDetails} {removeBookmark} />
-  {:else}
+    <BookmarkCard {bookmarkDetails} {removeBookmark} />
+  {:else if !isLoading}
     <NotBookmarkedAlert {onCancel} {onConfirm} />
   {/if}
   <RelatedBookmarks {currentPage} {relatedBookmarks} {getDomain} />

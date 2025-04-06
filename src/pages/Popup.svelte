@@ -136,10 +136,6 @@
     }
   }
 
-  .animate-shine {
-    animation: shine 2s infinite;
-  }
-
   /* Progress bar styling */
   :global(.progress-value) {
     transition: width 0.3s ease;

@@ -4,7 +4,6 @@
   import Button from "../../lib/components/ui/button/button.svelte";
   import { getFaviconFromUrl } from "../../script/bookmark.util";
 
-  export let currentPage;
   export let bookmarkDetails;
   export let removeBookmark;
 </script>
