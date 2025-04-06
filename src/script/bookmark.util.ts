@@ -1,5 +1,9 @@
 import Browser from "webextension-polyfill";
 
+export function getFaviconFromUrl(url: string): string {
+  const domain = new URL(url).origin;
+  return `${domain}/favicon.ico`;
+}
 export async function createFolder(parentId: string, title: string) {
   const y = await Browser.bookmarks.create({
     parentId: parentId,
@@ -46,10 +50,8 @@ export async function getCategory(): Promise<{
   parentId: string | undefined;
   folders: Browser.Bookmarks.BookmarkTreeNode[];
 }> {
-  // Get all bookmarks
   let bookmarks = await Browser.bookmarks.getTree();
 
-  // Look for "BookmarkBuddy" folder
   let bookmarkBuddy = findFolder(bookmarks[0], "BookmarkBuddy");
 
   if (!bookmarkBuddy && !!bookmarks[0].children) {
@@ -73,21 +75,18 @@ export async function getCategory(): Promise<{
 
   return { parentId: bookmarkBuddy?.id, folders: folders.reverse() };
 }
-export function saveBookmark(url: string, contents: string) {}
 
-export async function createBookmarkStructure(url: string, title: any) {
+export async function bookmarkUrl(url: string, title: any, category: string) {
   const domain = new URL(url).hostname;
 
-  // Find or create BookmarkBuddy folder
-  let bookmarkBuddyFolder: any = await getOrCreateFolder(
-    "BookmarkBuddy",
-    undefined
-  );
+  let bookmarks = await Browser.bookmarks.getTree();
+
+  let bookmarkBuddy = findFolder(bookmarks[0], "BookmarkBuddy");
 
   // Find or create Categories folder inside BookmarkBuddy
   let categoriesFolder: any = await getOrCreateFolder(
-    "Categories",
-    bookmarkBuddyFolder.id
+    category,
+    bookmarkBuddy?.id
   );
 
   // Find or create the domain folder inside Categories
@@ -116,16 +115,38 @@ export async function getOrCreateFolder(
 
   return Browser.bookmarks.create({ parentId, title });
 }
-// Listen for messages from the popup
-// chrome.runtime.onMessage.addListener((message) => {
-//   if (message.action === "addBookmark") {
-//     createBookmarkStructure(message.url, message.title);
-//   }
-// });
 
 export async function getCurrenttab() {
   const tab = await Browser.tabs.query({ active: true, currentWindow: true });
   console.log(tab);
 
   return tab[0];
+}
+
+export async function getBookmarks() {
+  let cFolder = await getCategory();
+  // Create an array to hold all subfolders
+  let allSubfolders = await Promise.all(
+    cFolder.folders.map(async (folder) => {
+      // Get children of each category folder
+      let subfolders = await Browser.bookmarks.getChildren(folder.id);
+      return subfolders
+        .filter((item) => item.url === undefined)
+        .map((x) => {
+          // let child = await Browser.bookmarks.getChildren(x.id);
+          return {
+            category: folder.title,
+            title: x.title,
+            // childerns: child,
+          };
+        });
+    })
+  );
+
+  // Flatten the array of subfolders
+  return allSubfolders.flat();
+}
+
+async function getRecentlyUsedBookmark() {
+  let cFolder = await getCategory();
 }

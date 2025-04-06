@@ -8,10 +8,11 @@
   import CardHeader from "../../lib/components/ui/card/card-header.svelte";
   import CardTitle from "../../lib/components/ui/card/card-title.svelte";
   import CardDescription from "../../lib/components/ui/card/card-description.svelte";
-  import { getCurrenttab } from "../../script/bookmark.util";
+  import { bookmarkUrl, getCurrenttab } from "../../script/bookmark.util";
   import { ACTION } from "../../const";
   import { onMount } from "svelte";
   import { WebhookIcon } from "lucide-svelte";
+  import { callAiapi } from "../../script/ai";
 
   export let isSideBar = false;
   async function getCurrentTabDetails() {
@@ -50,6 +51,8 @@
       }
     );
   });
+
+  let bookmarkDetails: any;
   // State management
   let isBookmarked = false; // Set to true to test the bookmarked state
   let isLoading = false;
@@ -58,51 +61,31 @@
   let pulseBookmark = true;
 
   // Sample related bookmarks from the same domain
-  const relatedBookmarks = [
-    {
-      title: "GitHub - shadcn-svelte/ui: Shadcn UI port for Svelte",
-      url: "https://github.com/shadcn-svelte/ui",
-      addedOn: "2 days ago",
-    },
-    {
-      title: "GitHub - sveltejs/svelte: Cybernetically enhanced web apps",
-      url: "https://github.com/sveltejs/svelte",
-      addedOn: "1 week ago",
-    },
-    {
-      title: "GitHub - vercel/next.js: The React Framework",
-      url: "https://github.com/vercel/next.js",
-      addedOn: "3 weeks ago",
-    },
-  ];
-
-  // Bookmark details (if already bookmarked)
-  const bookmarkDetails = {
-    addedOn: "April 15, 2023",
-    folder: "Development",
-    tags: ["github", "code", "development"],
-    notes:
-      "Main GitHub homepage. Good starting point for finding repositories and projects.",
-  };
+  const relatedBookmarks: any = [];
 
   // Function to handle bookmark action
-  function handleBookmark() {
+  async function handleBookmark() {
     isLoading = true;
     progress = 0;
+    bookmarkDetails = await callAiapi(currentPage);
 
-    // Simulate progress
-    const interval = setInterval(() => {
-      progress += 2;
-      if (progress >= 100) {
-        clearInterval(interval);
-        isLoading = false;
-        isBookmarked = true;
-        showSuccess = true;
-        setTimeout(() => {
-          showSuccess = false;
-        }, 3000);
-      }
-    }, 30);
+    const jsonMatch = bookmarkDetails?.result?.response.match(/{[\s\S]*}/);
+    if (jsonMatch) {
+      const jsonString = jsonMatch[0];
+      const jsonObject = JSON.parse(jsonString);
+      bookmarkDetails = jsonObject;
+    }
+    await bookmarkUrl(
+      currentPage.url,
+      bookmarkDetails.title,
+      bookmarkDetails.category
+    );
+    isLoading = false;
+    isBookmarked = true;
+    showSuccess = true;
+    setTimeout(() => {
+      showSuccess = false;
+    }, 2000);
   }
 
   // Function to remove bookmark
@@ -171,7 +154,7 @@
   {#if isBookmarked}
     <BookmarkCard {currentPage} {bookmarkDetails} {removeBookmark} />
   {:else}
-    <NotBookmarkedAlert {currentPage} {onCancel} {onConfirm} />
+    <NotBookmarkedAlert {onCancel} {onConfirm} />
   {/if}
   <RelatedBookmarks {currentPage} {relatedBookmarks} {getDomain} />
 </div>

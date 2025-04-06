@@ -18,6 +18,7 @@
   import Input from "../../lib/components/ui/input/input.svelte";
   import {
     createFolder,
+    getBookmarks,
     getCategory,
     getOrCreateFolder,
   } from "../../script/bookmark.util";
@@ -27,30 +28,20 @@
   let viewInput = false;
   let parentFolderId = "";
   let categories: any[] = [];
+  let saved: any[] = [];
 
   onMount(async () => {
     let bookmarkBuddyFolder: any = await getCategory();
     categories = bookmarkBuddyFolder.folders;
     parentFolderId = bookmarkBuddyFolder.parentId;
+    saved = await getBookmarks();
+    console.log(saved);
   });
   // Sample data for suggestions
 
   // Sample data for bookmarks
   let recents = [{ url: "com.github.com", title: "GitHub", expanded: false }];
 
-  const saved = [
-    {
-      url: "com.github.com",
-      title: "GitHub",
-      expanded: true,
-      content:
-        "school management platform designed to help\n\nThe best way to put ads in a Chrome extension depends on the user experience and your extension's functionality. Here are the best ad placement strategies:\n\nhttps://chatgpt.com/c/67dfd478-b954-8009-b8fb-",
-    },
-    { url: "svelte.dev", title: "Svelte", expanded: false },
-    { url: "tailwindcss.com", title: "Tailwind CSS", expanded: false },
-    { url: "vercel.com", title: "Vercel", expanded: false },
-    { url: "openai.com", title: "OpenAI", expanded: false },
-  ];
   let activeCategory: any = null;
   // Find or create BookmarkBuddy folder
 

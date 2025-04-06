@@ -1,27 +1,51 @@
 <script lang="ts">
-  import { Clock, Trash2 } from "lucide-svelte";
+  import { Trash2 } from "lucide-svelte";
   import { fade } from "svelte/transition";
   import Button from "../../lib/components/ui/button/button.svelte";
+  import { getFaviconFromUrl } from "../../script/bookmark.util";
 
   export let currentPage;
   export let bookmarkDetails;
   export let removeBookmark;
 </script>
 
-<div class="space-y-4" in:fade={{ duration: 300 }}>
-  <div class="bg-muted p-3 rounded-md text-sm relative overflow-hidden group">
-    <div
-      class="absolute top-0 right-0 h-16 w-16 -mt-8 -mr-8 bg-primary/5 rounded-full transform rotate-45"
-    ></div>
-    <p class="text-muted-foreground mb-1 line-clamp-3 relative">
-      {currentPage.description}
-    </p>
-    <div
-      class="flex items-center gap-1 text-xs text-muted-foreground mt-2 relative"
+<div class="space-y-1" in:fade={{ duration: 300 }}>
+  <div class=" p-1 rounded-md relative overflow-hidden group">
+    <h6
+      class=" border-b pb-2 text-xl font-semibold tracking-tight transition-colors first:mt-0"
     >
-      <Clock class="h-3 w-3" />
-      <span>Added on {bookmarkDetails.addedOn}</span>
-    </div>
+      {bookmarkDetails.title}
+    </h6>
+    <p class="leading-2">
+      {bookmarkDetails.details}
+    </p>
+
+    <h6 class="text-sm font-semibold mt-2">Usefull links</h6>
+    <ul class=" ml-6 list-decimal [&>li]:mt-2">
+      {#each bookmarkDetails?.links as links}
+        <li>
+          <a class="text-primary cursor-pointer" href={links} target="_blank"
+            >{links}</a
+          >
+        </li>
+      {/each}
+    </ul>
+    <h6 class="text-sm font-semibold mt-2">Alternative Websites</h6>
+    <ul class=" ml-1 list-none [&>li]:mt-2">
+      {#each bookmarkDetails?.alternatives as links}
+        <li class="flex">
+          <img
+            src={getFaviconFromUrl(links)}
+            class="h-[16px] mr-2"
+            alt=""
+            srcset=""
+          />
+          <a class="text-primary cursor-pointer" href={links} target="_blank">
+            {links}</a
+          >
+        </li>
+      {/each}
+    </ul>
   </div>
   <div class="flex justify-end gap-2">
     <Button variant="destructive" size="sm" on:click={removeBookmark}>

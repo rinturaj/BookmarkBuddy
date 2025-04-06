@@ -13,7 +13,7 @@
   <div in:scale={{ duration: 400, easing: elasticOut, start: 0.8 }}>
     <Alert
       variant="default"
-      class="bg-green-50 text-green-800 border-green-200"
+      class="bg-green-50 my-2 text-green-800 border-green-200"
     >
       <Check class="h-4 w-4 text-green-600" />
       <AlertTitle>Success!</AlertTitle>
