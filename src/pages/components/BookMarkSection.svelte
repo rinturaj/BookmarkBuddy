@@ -3,11 +3,8 @@
     ChevronRight,
     ChevronDown,
     Bookmark,
-    Folder,
-    Plus,
     PlusIcon,
     Check,
-    ListFilter,
     List,
   } from "lucide-svelte";
   import * as Dialog from "$lib/components/ui/dialog/index";
@@ -20,10 +17,13 @@
     createFolder,
     getBookmarks,
     getCategory,
-    getOrCreateFolder,
+    getFaviconFromUrl,
+    getRecentBookmarks,
   } from "../../script/bookmark.util";
   import { onMount } from "svelte";
   import Badge from "../../lib/components/ui/badge/badge.svelte";
+  import { ACTION } from "../../const";
+  import Browser from "webextension-polyfill";
 
   let viewInput = false;
   let parentFolderId = "";
@@ -35,12 +35,20 @@
     categories = bookmarkBuddyFolder.folders;
     parentFolderId = bookmarkBuddyFolder.parentId;
     saved = await getBookmarks();
+    recents = await getRecentBookmarks(5);
+
+    Browser.runtime.onMessage.addListener(async (message) => {
+      if (message.action === ACTION.UPDATE_TABS) {
+        saved = await getBookmarks();
+        recents = await getRecentBookmarks(5);
+      }
+    });
     console.log(saved);
   });
   // Sample data for suggestions
 
   // Sample data for bookmarks
-  let recents = [{ url: "com.github.com", title: "GitHub", expanded: false }];
+  let recents: any[] = [];
 
   let activeCategory: any = null;
   // Find or create BookmarkBuddy folder
@@ -171,12 +179,20 @@
               onclick={() => toggleExpand(item)}
             >
               <div class="flex items-center gap-2">
-                <Folder class="w-5 h-5 text-muted-foreground" />
+                <img
+                  src={getFaviconFromUrl(item?.url)}
+                  class="h-[24px]"
+                  alt=""
+                  srcset=""
+                />
                 <div class="flex flex-col">
                   <span class="text-sm font-medium"
                     >{item?.title || item?.url}</span
                   >
-                  <span class="text-xs text-muted-foreground">{item?.url}</span>
+                  <span
+                    class="text-xs truncate max-w-[250px] text-muted-foreground"
+                    >{item?.url}</span
+                  >
                 </div>
               </div>
               <ChevronRight class="w-5 h-5 text-muted-foreground" />
@@ -196,23 +212,37 @@
         <Card class="p-0">
           <CardContent class="p-0">
             <button
-              class="w-full flex items-center justify-between p-2 text-left"
+              class="w-full flex items-center flex-grow min-w-0 justify-between p-2 text-left"
               onclick={() => toggleExpand(item)}
             >
-              <div class="flex items-center gap-2">
-                <Folder class="w-5 h-5 text-muted-foreground" />
-                <div class="flex flex-col">
-                  <span class="text-sm font-medium"
+              <div class="flex items-center flex-grow min-w-0 gap-2">
+                <img
+                  src={getFaviconFromUrl(item?.url)}
+                  class="h-[24px]"
+                  alt=""
+                  srcset=""
+                />
+                <div class="flex flex-col flex-grow min-w-0">
+                  <span class="text-sm font-medium truncate flex-grow min-w-0"
                     >{item.title || item.url}</span
                   >
-                  <span class="text-xs text-muted-foreground">{item.url}</span>
+                  <span
+                    class="text-xs truncate flex-grow min-w-0 text-muted-foreground"
+                    >{item.url}</span
+                  >
+                  <Badge
+                    class="truncate bg-primary/20 flex-shrink-0 flex-none min-w-0 "
+                    >{item.category}</Badge
+                  >
                 </div>
               </div>
-              {#if item.expanded}
-                <ChevronDown class="w-5 h-5 text-muted-foreground" />
-              {:else}
-                <ChevronRight class="w-5 h-5 text-muted-foreground" />
-              {/if}
+              <div class="flex items-center flex-shrink-0">
+                {#if item.expanded}
+                  <ChevronDown class="w-5 h-5 text-muted-foreground" />
+                {:else}
+                  <ChevronRight class="w-5 h-5 text-muted-foreground" />
+                {/if}
+              </div>
             </button>
 
             {#if item.expanded && item.content}

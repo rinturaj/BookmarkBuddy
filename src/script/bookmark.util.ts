@@ -1,8 +1,12 @@
 import Browser from "webextension-polyfill";
 
 export function getFaviconFromUrl(url: string): string {
-  const domain = new URL(url).origin;
-  return `${domain}/favicon.ico`;
+  try {
+    const domain = new URL(url).origin;
+    return `${domain}/favicon.ico`;
+  } catch (error) {
+    return "data:image/x-icon;";
+  }
 }
 export async function createFolder(parentId: string, title: string) {
   const y = await Browser.bookmarks.create({
@@ -130,23 +134,23 @@ export async function getBookmarks() {
     cFolder.folders.map(async (folder) => {
       // Get children of each category folder
       let subfolders = await Browser.bookmarks.getChildren(folder.id);
-      return subfolders
-        .filter((item) => item.url === undefined)
-        .map((x) => {
-          // let child = await Browser.bookmarks.getChildren(x.id);
-          return {
-            category: folder.title,
-            title: x.title,
-            // childerns: child,
-          };
-        });
+      return subfolders.map((x) => {
+        // let child = await Browser.bookmarks.getChildren(x.id);
+        return {
+          ...x,
+          ...{ category: folder.title },
+        };
+      });
     })
   );
+  console.log(allSubfolders);
 
   // Flatten the array of subfolders
   return allSubfolders.flat();
 }
-
-async function getRecentlyUsedBookmark() {
-  let cFolder = await getCategory();
+export async function getRecentBookmarks(
+  limit: number = 10
+): Promise<Browser.Bookmarks.BookmarkTreeNode[]> {
+  const recentBookmarks = await Browser.bookmarks.getRecent(limit);
+  return recentBookmarks;
 }

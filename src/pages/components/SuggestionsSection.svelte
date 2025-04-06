@@ -21,7 +21,6 @@
       maxResults: 100,
     });
     // Sort by visit count and take top 5
-    console.log(historyItems);
 
     frequentLinks = historyItems
       .reduce((x: any[], a) => {
