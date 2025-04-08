@@ -139,6 +139,7 @@ export async function getBookmarks() {
         return {
           ...x,
           ...{ category: folder.title },
+          ...{ expanded: false },
         };
       });
     })

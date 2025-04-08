@@ -6,6 +6,8 @@
     PlusIcon,
     Check,
     List,
+    BookOpen,
+    ExternalLink,
   } from "lucide-svelte";
   import * as Dialog from "$lib/components/ui/dialog/index";
   // Import shadcn-svelte components
@@ -24,6 +26,7 @@
   import Badge from "../../lib/components/ui/badge/badge.svelte";
   import { ACTION } from "../../const";
   import Browser from "webextension-polyfill";
+  import BookmarkCard from "./BookmarkCard.svelte";
 
   let viewInput = false;
   let parentFolderId = "";
@@ -36,35 +39,30 @@
     parentFolderId = bookmarkBuddyFolder.parentId;
     saved = await getBookmarks();
     recents = await getRecentBookmarks(5);
-
-    Browser.runtime.onMessage.addListener(async (message) => {
-      if (message.action === ACTION.UPDATE_TABS) {
-        saved = await getBookmarks();
-        recents = await getRecentBookmarks(5);
-      }
-    });
     console.log(saved);
   });
-  // Sample data for suggestions
 
   // Sample data for bookmarks
   let recents: any[] = [];
 
   let activeCategory: any = null;
-  // Find or create BookmarkBuddy folder
 
-  // Sample captured content
+  Browser.runtime.onMessage.addListener(async (message) => {
+    if (message.action === ACTION.UPDATE_TABS) {
+      saved = await getBookmarks();
+      recents = await getRecentBookmarks(5);
+    }
+  });
 
-  // Sample AI analysis
-
-  // Sample user notes
-
-  // Toggle expansion of bookmark items
-  function toggleExpand(item: any) {
+  async function toggleExpand(item: any, index: number) {
     console.log("toggle");
 
-    item.expanded = !item.expanded;
+    saved[index].expanded = !item.expanded;
+    saved[index].content = await Browser.storage.local.get(item.url);
+    saved[index].content = saved[index].content[item.url.toString()];
   }
+
+  function removeBookmark() {}
 
   // Capture selected content
 
@@ -85,6 +83,9 @@
   let addCategory = true;
   let categoryname = "";
   let listCategory = false;
+
+  export let imageUrl =
+    "https://cdn-icons-png.flaticon.com/512/1828/1828884.png"; // Bookmark icon or 'no bookmarks' illustration
 </script>
 
 <!-- Bookmarks -->
@@ -167,53 +168,72 @@
       {/each}
     </div>
   </ScrollArea>
-  <div class="px-2 mb-2">
-    <h3 class="text-lg font-semibold mb-2">Recents</h3>
+  {#if recents.length > 0}
+    <div class="px-2 mb-2">
+      <h3 class="text-lg font-semibold mb-2">Recents</h3>
 
-    {#each recents as item}
-      <div class="mb-2">
-        <Card class="p-0">
-          <CardContent class="p-0">
-            <button
-              class="w-full flex items-center justify-between p-2 text-left"
-              onclick={() => toggleExpand(item)}
-            >
-              <div class="flex items-center gap-2">
-                <img
-                  src={getFaviconFromUrl(item?.url)}
-                  class="h-[24px]"
-                  alt=""
-                  srcset=""
-                />
-                <div class="flex flex-col">
-                  <span class="text-sm font-medium"
-                    >{item?.title || item?.url}</span
-                  >
-                  <span
-                    class="text-xs truncate max-w-[250px] text-muted-foreground"
-                    >{item?.url}</span
-                  >
+      {#each recents as item, index}
+        <div class="mb-2">
+          <Card class="p-0">
+            <CardContent class="p-0">
+              <button
+                class="w-full hover:bg-muted cursor-pointer rounded-lg flex items-center justify-between p-2 flex-grow min-w-0 text-left"
+                onclick={() => toggleExpand(item, index)}
+              >
+                <div class="flex items-center gap-2 flex-grow min-w-0">
+                  <img
+                    src={getFaviconFromUrl(item?.url)}
+                    class="h-[24px]"
+                    alt=""
+                    srcset=""
+                  />
+                  <div class="flex flex-col flex-grow min-w-0">
+                    <span
+                      class="text-sm font-medium font-medium truncate flex-grow min-w-0"
+                      >{item?.title || item?.url}</span
+                    >
+                    <!-- <span
+                      class="text-xs truncate max-w-[250px] text-muted-foreground"
+                      >{item?.url}</span
+                    > -->
+                  </div>
                 </div>
-              </div>
-              <ChevronRight class="w-5 h-5 text-muted-foreground" />
-            </button>
-          </CardContent>
-        </Card>
-      </div>
-    {/each}
-  </div>
-
+                <ExternalLink
+                  class="w-5 h-5 flex-shrink-0 text-muted-foreground"
+                />
+              </button>
+            </CardContent>
+          </Card>
+        </div>
+      {/each}
+    </div>
+  {/if}
   <!-- Saved -->
   <div class="px-2">
     <h3 class="text-lg font-semibold mb-2">Saved</h3>
 
-    {#each saved as item}
+    {#if saved.length === 0}
+      <div class="flex flex-col items-center justify-center p-6 text-center">
+        <img
+          src={imageUrl}
+          alt="No data found"
+          class="w-12 h-12 mb-4 opacity-70"
+        />
+        <p class="text-lg font-medium text-gray-600">No Bookmarks</p>
+        <p>
+          No worries! Our AI Assistant is here to help you save and organize
+          your bookmarks with ease!
+        </p>
+      </div>
+    {/if}
+
+    {#each saved as item, index}
       <div class="mb-2">
         <Card class="p-0">
           <CardContent class="p-0">
             <button
-              class="w-full flex items-center flex-grow min-w-0 justify-between p-2 text-left"
-              onclick={() => toggleExpand(item)}
+              class="w-full hover:bg-muted cursor-pointer rounded-lg flex items-center flex-grow min-w-0 justify-between p-2 text-left"
+              onclick={() => toggleExpand(item, index)}
             >
               <div class="flex items-center flex-grow min-w-0 gap-2">
                 <img
@@ -230,10 +250,6 @@
                     class="text-xs truncate flex-grow min-w-0 text-muted-foreground"
                     >{item.url}</span
                   >
-                  <Badge
-                    class="truncate bg-primary/20 flex-shrink-0 flex-none min-w-0 "
-                    >{item.category}</Badge
-                  >
                 </div>
               </div>
               <div class="flex items-center flex-shrink-0">
@@ -245,11 +261,13 @@
               </div>
             </button>
 
-            {#if item.expanded && item.content}
+            {#if item.expanded}
               <div
                 class="pl-8 pr-4 py-2 text-sm text-muted-foreground border-l-2 border-muted ml-3"
               >
-                {item.content}
+                <Badge variant="secondary">{item.category}</Badge>
+                <BookmarkCard {removeBookmark} bookmarkDetails={item.content}
+                ></BookmarkCard>
               </div>
             {/if}
           </CardContent>

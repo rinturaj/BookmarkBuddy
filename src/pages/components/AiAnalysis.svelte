@@ -71,25 +71,32 @@
     progress = 0;
     bookmarkDetails = await callAiapi(currentPage);
 
+    const book = await bookmarkUrl(
+      currentPage.url,
+      bookmarkDetails.title,
+      bookmarkDetails.category
+    );
+
     const jsonMatch = bookmarkDetails?.result?.response.match(/{[\s\S]*}/);
     if (jsonMatch) {
       const jsonString = jsonMatch[0];
       const jsonObject = JSON.parse(jsonString);
       bookmarkDetails = jsonObject;
-      let value = { [currentPage.url]: bookmarkDetails }; // Use computed property name
+      bookmarkDetails = {
+        ...bookmarkDetails,
+        ...book,
+      };
+      let value = { [currentPage.url]: bookmarkDetails };
       await Browser.storage.local.set(value);
     }
-    await bookmarkUrl(
-      currentPage.url,
-      bookmarkDetails.title,
-      bookmarkDetails.category
-    );
+
     isLoading = false;
     isBookmarked = true;
     showSuccess = true;
     setTimeout(() => {
       showSuccess = false;
     }, 2000);
+    await Browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
   }
 
   // Function to remove bookmark
@@ -135,15 +142,22 @@
   startPulse();
 </script>
 
-<div class={isSideBar ? "p-1" : ""}>
+<div class={isSideBar ? "p-2" : ""}>
   {#if isSideBar}
-    <CardHeader class="mb-2 p-2">
-      <div class="flex justify-between items-start">
-        <div class="flex items-center gap-2">
-          <img src={currentPage.favicon} alt="" class="h-[32px]" />
-          <div>
-            <CardTitle class="text-base">{currentPage.title}</CardTitle>
-            <CardDescription class="text-xs truncate max-w-[250px]">
+    <CardHeader class="mb-2 p-1">
+      <div class="flex flex-grow-0 justify-between items-start w-full">
+        <div class="flex items-start flex-grow min-w-0 gap-2">
+          <img src={currentPage.favicon} alt="" class="h-8 w-8 flex-shrink-0" />
+
+          <div class="min-w-0">
+            <CardTitle
+              class="text-base truncate max-w-full overflow-hidden whitespace-nowrap"
+            >
+              {currentPage.title}
+            </CardTitle>
+            <CardDescription
+              class="text-xs truncate max-w-full overflow-hidden whitespace-nowrap"
+            >
               {currentPage.url}
             </CardDescription>
           </div>

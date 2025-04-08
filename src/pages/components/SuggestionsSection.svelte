@@ -49,7 +49,7 @@
         <a
           href={suggestion.url}
           target="_blank"
-          class="flex items-center justify-between gap-3 p-2 hover:bg-muted rounded-md cursor-pointer transition-colors"
+          class="flex items-center justify-between gap-3 p-2 hover:bg-muted cursor-pointer rounded-md transition-colors"
         >
           <!-- <div class="text-foreground">
             {@html getIcon(suggestion.icon)}

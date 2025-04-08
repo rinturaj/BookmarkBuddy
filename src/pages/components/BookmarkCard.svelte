@@ -13,10 +13,10 @@
     <h6
       class=" border-b pb-2 text-xl font-semibold tracking-tight transition-colors first:mt-0"
     >
-      {bookmarkDetails.title}
+      {bookmarkDetails?.title}
     </h6>
     <p class="leading-2">
-      {bookmarkDetails.details}
+      {bookmarkDetails?.details}
     </p>
 
     <h6 class="text-sm font-semibold mt-2">Usefull links</h6>

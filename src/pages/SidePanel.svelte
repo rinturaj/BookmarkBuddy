@@ -17,6 +17,8 @@
 <div class={`flex flex-col h-full w-full  bg-background`}>
   <Header></Header>
 
+  <AiAnalysis isSideBar={true}></AiAnalysis>
+
   <Tabs.Root
     value="bookmark"
     class="p-2"
@@ -24,14 +26,13 @@
       Browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
     }}
   >
-    <Tabs.List class="grid w-full grid-cols-3 ">
-      <Tabs.Trigger value="thispage">🕵️‍♀️ Ai Assistant</Tabs.Trigger>
+    <Tabs.List class="grid w-full grid-cols-2 ">
+      <!-- <Tabs.Trigger value="thispage">🕵️‍♀️ Ai Assistant</Tabs.Trigger> -->
       <Tabs.Trigger value="bookmark">Bookmarks</Tabs.Trigger>
       <Tabs.Trigger value="active">Active Tabs</Tabs.Trigger>
     </Tabs.List>
-    <Tabs.Content value="thispage">
-      <AiAnalysis isSideBar={true}></AiAnalysis>
-    </Tabs.Content>
+    <!-- <Tabs.Content value="thispage"> -->
+    <!-- </Tabs.Content> -->
     <Tabs.Content value="active">
       <ActiveTabs></ActiveTabs>
       <SuggestionsSection></SuggestionsSection>
