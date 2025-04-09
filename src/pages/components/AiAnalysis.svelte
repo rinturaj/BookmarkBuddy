@@ -11,7 +11,6 @@
   import { bookmarkUrl, getCurrenttab } from "../../script/bookmark.util";
   import { ACTION } from "../../const";
   import { onMount } from "svelte";
-  import { WebhookIcon } from "lucide-svelte";
   import { callAiapi } from "../../script/ai";
 
   export let isSideBar = false;
@@ -35,7 +34,6 @@
 
   onMount(async () => {
     await getCurrentTabDetails();
-
     Browser.runtime.onMessage.addListener(
       async (message, sender, sendResponse) => {
         console.log("AI Messages");
@@ -69,25 +67,31 @@
   async function handleBookmark() {
     isLoading = true;
     progress = 0;
+    const interval = setInterval(() => {
+      progress += 5;
+      if (progress >= 40) {
+        clearInterval(interval);
+      }
+    }, 50);
     bookmarkDetails = await callAiapi(currentPage);
-
-    const book = await bookmarkUrl(
-      currentPage.url,
-      bookmarkDetails.title,
-      bookmarkDetails.category
-    );
+    clearInterval(interval);
 
     const jsonMatch = bookmarkDetails?.result?.response.match(/{[\s\S]*}/);
     if (jsonMatch) {
       const jsonString = jsonMatch[0];
       const jsonObject = JSON.parse(jsonString);
       bookmarkDetails = jsonObject;
+      progress = 40;
+      const book = await bookmarkUrl(
+        currentPage.url,
+        bookmarkDetails.title,
+        bookmarkDetails.category
+      );
       bookmarkDetails = {
         ...bookmarkDetails,
         ...book,
       };
-      let value = { [currentPage.url]: bookmarkDetails };
-      await Browser.storage.local.set(value);
+      progress += 25;
     }
 
     isLoading = false;
@@ -96,7 +100,11 @@
     setTimeout(() => {
       showSuccess = false;
     }, 2000);
-    await Browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
+    progress += 25;
+    await Browser.runtime.sendMessage({
+      action: ACTION.BOOKMARK_UPDATE,
+      data: bookmarkDetails,
+    });
   }
 
   // Function to remove bookmark

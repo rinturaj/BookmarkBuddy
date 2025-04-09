@@ -1,11 +1,36 @@
 import browser from "webextension-polyfill";
 import { ACTION } from "./const";
+import { callMiniLLm } from "./script/bookmarkStore";
+import textEmbedder from "./script/textEmbedder";
 console.log("Background script loaded!");
 
-browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  // console.log("Message received:", message);
+textEmbedder.initialize({
+  onProgress: (progress: any) => {
+    console.log(`Model loading progress: ${progress.progress * 100}%`);
+  },
 });
 
+browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  console.log("Message received:", message);
+  if (message.action === ACTION.BOOKMARK_UPDATE) {
+    let bookmarkDetails = message.data;
+    try {
+      bookmarkDetails.embedding = await callMiniLLm(
+        `title: ${bookmarkDetails.title} , category: ${
+          bookmarkDetails.details
+        } , category: ${bookmarkDetails.category} , url: ${
+          bookmarkDetails.url
+        } , createdAt: ${new Date(bookmarkDetails.dateAdded).toISOString()}`
+      );
+    } catch (error) {
+      console.error("Error generating embedding:", error);
+    }
+    let value = { [bookmarkDetails.url]: bookmarkDetails };
+    await browser.storage.local.set(value);
+    browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
+    browser.runtime.sendMessage({ action: ACTION.UPDATE_VECTORS });
+  }
+});
 // Create context menu when the extension is installed
 browser.runtime.onInstalled.addListener(async () => {
   browser.contextMenus.create({

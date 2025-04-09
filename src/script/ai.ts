@@ -1,4 +1,8 @@
+import { getCategory } from "./bookmark.util";
+
 export async function callAiapi(pageDetails: any) {
+  let bookmarkBuddyFolder: any = await getCategory();
+  let bookmarkFolders = bookmarkBuddyFolder.folders.map((x: any) => x.title);
   const apiUrl =
     "https://api.cloudflare.com/client/v4/accounts/bc3e2bd76b264a0fa43a0ecb31ce72e5/ai/run/@cf/meta/llama-3-8b-instruct";
   const apiKey = import.meta.env.VITE_API_KEY; // Use environment variables for security in production
@@ -12,14 +16,14 @@ export async function callAiapi(pageDetails: any) {
      - One or more useful or important links related to the website
      - provide one or more alternative website which have the same use case as this website
      - A suitable category for the website, chosen from the following list:
-       [📂 Work & Productivity, 📚 Learning & Research, 📰 News & Updates, 🎬 Entertainment & Leisure, 🛒 Shopping & Deals, 📱 Social Media & Networking, 💰 Finance & Banking, 🛠️ Tools & Utilities]
+       [${bookmarkFolders.join(", ")}]
      
      Respond in valid JSON format with the following fields:
      
      {
        "title": "Website Title Here",
        "details": "Short description of the website here.",
-       "category": "📂 Work & Productivity",
+       "category": "Utility",
        "alternatives": ["https://example.com", "https://example.com"]
        "links": ["https://example.com/link1", "https://example.com/link2"]
      }

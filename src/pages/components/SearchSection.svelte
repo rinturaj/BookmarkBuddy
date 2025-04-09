@@ -10,19 +10,23 @@
     searchBookmarks,
   } from "../../script/bookmarkStore";
   import { get } from "svelte/store";
-  import Button from "../../lib/components/ui/button/button.svelte";
-  import { handleEnhancedSearch } from "../../script/enhancedSearch";
   let query = "";
-  let results: any[] = [];
 
   onMount(async () => {
     await loadBookmarks();
   });
 
+  let debounceTimeout: any = null;
+
   async function handleSearch() {
-    const list = get(bookmarks);
-    results = await searchBookmarks(query, list);
-    handleEnhancedSearch(query, list);
+    clearTimeout(debounceTimeout);
+
+    // Start a new timer
+    debounceTimeout = setTimeout(async () => {
+      const list = get(bookmarks);
+      searchBookmarks(query, list);
+    }, 500); // Adjust delay as needed
+    // handleEnhancedSearch(query, list);
   }
 </script>
 
@@ -32,18 +36,12 @@
     <Search
       class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5"
     />
-    <Input bind:value={query} placeholder="search here" class="pl-10" />
-    <Button onclick={handleSearch}>Search</Button>
+    <Input
+      bind:value={query}
+      oninput={handleSearch}
+      placeholder="search here"
+      class="pl-10"
+    />
+    <!-- <Button onclick={handleSearch}>Search</Button> -->
   </div>
 </div>
-{#if results.length > 0}
-  <h3>Results:</h3>
-  {#each results as b}
-    <div style="border: 1px solid #ccc; padding: 8px; margin: 5px;">
-      <strong>{b.title}</strong><br />
-      <a href={b.url} target="_blank">{b.url}</a><br />
-      <small>{b.description}</small><br />
-      <small>Saved: {b.createdAt}</small>
-    </div>
-  {/each}
-{/if}

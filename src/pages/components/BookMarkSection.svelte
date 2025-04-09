@@ -27,17 +27,18 @@
   import { ACTION } from "../../const";
   import Browser from "webextension-polyfill";
   import BookmarkCard from "./BookmarkCard.svelte";
+  import { searchResult } from "../../script/bookmarkStore";
+  import Separator from "../../lib/components/ui/separator/separator.svelte";
 
   let viewInput = false;
   let parentFolderId = "";
   let categories: any[] = [];
-  let saved: any[] = [];
+  $: saved = searchResult;
 
   onMount(async () => {
     let bookmarkBuddyFolder: any = await getCategory();
     categories = bookmarkBuddyFolder.folders;
     parentFolderId = bookmarkBuddyFolder.parentId;
-    saved = await getBookmarks();
     recents = await getRecentBookmarks(5);
     console.log(saved);
   });
@@ -49,37 +50,48 @@
 
   Browser.runtime.onMessage.addListener(async (message) => {
     if (message.action === ACTION.UPDATE_TABS) {
-      saved = await getBookmarks();
       recents = await getRecentBookmarks(5);
     }
   });
 
-  async function toggleExpand(item: any, index: number) {
+  async function toggleExpand(v: any, index: number) {
     console.log("toggle");
 
-    saved[index].expanded = !item.expanded;
-    saved[index].content = await Browser.storage.local.get(item.url);
-    saved[index].content = saved[index].content[item.url.toString()];
+    // Get the current value of the store
+    const currentItems = $saved;
+
+    // Find the item to update
+    const updatedItems = currentItems.map((item) => {
+      if (item.id === v.id) {
+        return { ...item, expanded: !item.expanded };
+      } else {
+        return { ...item, expanded: false };
+      }
+    });
+
+    // Update the store with the new items
+    searchResult.set(updatedItems);
+
+    // If the item is now expanded, fetch its content
+    if (updatedItems.find((item) => item.id === v.id)?.expanded) {
+      const content = await Browser.storage.local.get(v.url);
+      const updatedItemsWithContent = updatedItems.map((item) => {
+        if (item.id === v.id) {
+          return {
+            ...item,
+            content: content[v.url.toString()],
+          };
+        }
+        return item;
+      });
+
+      // Update the store with the content
+      searchResult.set(updatedItemsWithContent);
+    }
   }
 
   function removeBookmark() {}
 
-  // Capture selected content
-
-  // Clear captured content
-
-  // Icon components mapping
-  // Save current tab as bookmark
-  function saveCurrentTab() {
-    // In a real extension, this would interact with the Chrome API
-    // For now, we'll just add a dummy entry to recents
-    recents.unshift({
-      url: "new-bookmark.com",
-      title: "New Bookmark",
-      expanded: false,
-    });
-    recents = recents; // Trigger reactivity
-  }
   let addCategory = true;
   let categoryname = "";
   let listCategory = false;
@@ -168,51 +180,11 @@
       {/each}
     </div>
   </ScrollArea>
-  {#if recents.length > 0}
-    <div class="px-2 mb-2">
-      <h3 class="text-lg font-semibold mb-2">Recents</h3>
-
-      {#each recents as item, index}
-        <div class="mb-2">
-          <Card class="p-0">
-            <CardContent class="p-0">
-              <button
-                class="w-full hover:bg-muted cursor-pointer rounded-lg flex items-center justify-between p-2 flex-grow min-w-0 text-left"
-                onclick={() => toggleExpand(item, index)}
-              >
-                <div class="flex items-center gap-2 flex-grow min-w-0">
-                  <img
-                    src={getFaviconFromUrl(item?.url)}
-                    class="h-[24px]"
-                    alt=""
-                    srcset=""
-                  />
-                  <div class="flex flex-col flex-grow min-w-0">
-                    <span
-                      class="text-sm font-medium font-medium truncate flex-grow min-w-0"
-                      >{item?.title || item?.url}</span
-                    >
-                    <!-- <span
-                      class="text-xs truncate max-w-[250px] text-muted-foreground"
-                      >{item?.url}</span
-                    > -->
-                  </div>
-                </div>
-                <ExternalLink
-                  class="w-5 h-5 flex-shrink-0 text-muted-foreground"
-                />
-              </button>
-            </CardContent>
-          </Card>
-        </div>
-      {/each}
-    </div>
-  {/if}
   <!-- Saved -->
   <div class="px-2">
-    <h3 class="text-lg font-semibold mb-2">Saved</h3>
+    <h4 class="text-lg font-semibold mb-2">Search Result</h4>
 
-    {#if saved.length === 0}
+    {#if $saved.length === 0}
       <div class="flex flex-col items-center justify-center p-6 text-center">
         <img
           src={imageUrl}
@@ -227,7 +199,7 @@
       </div>
     {/if}
 
-    {#each saved as item, index}
+    {#each $saved as item, index}
       <div class="mb-2">
         <Card class="p-0">
           <CardContent class="p-0">
@@ -263,7 +235,7 @@
 
             {#if item.expanded}
               <div
-                class="pl-8 pr-4 py-2 text-sm text-muted-foreground border-l-2 border-muted ml-3"
+                class="pl-4 pr-4 py-2 text-muted-foreground border-l-2 border-muted ml-3"
               >
                 <Badge variant="secondary">{item.category}</Badge>
                 <BookmarkCard {removeBookmark} bookmarkDetails={item.content}
@@ -275,4 +247,46 @@
       </div>
     {/each}
   </div>
+  {#if recents.length > 0}
+    <Separator></Separator>
+
+    <div class="px-2 mb-2">
+      <h4 class="text-lg font-semibold mb-2">Recently Saved Bookmark</h4>
+
+      {#each recents as item, index}
+        <div class="mb-2">
+          <Card class="p-0">
+            <CardContent class="p-0">
+              <button
+                class="w-full hover:bg-muted cursor-pointer rounded-lg flex items-center justify-between p-2 flex-grow min-w-0 text-left"
+              >
+                <div class="flex items-center gap-2 flex-grow min-w-0">
+                  <img
+                    src={getFaviconFromUrl(item?.url)}
+                    class="h-[24px]"
+                    alt=""
+                    srcset=""
+                  />
+                  <div class="flex flex-col flex-grow min-w-0">
+                    <span
+                      class="text-sm font-medium font-medium truncate flex-grow min-w-0"
+                      >{item?.title || item?.url}</span
+                    >
+                    <span
+                      class="text-xs truncate max-w-[250px] text-muted-foreground"
+                    >
+                      {item?.url}</span
+                    >
+                  </div>
+                </div>
+                <ExternalLink
+                  class="w-5 h-5 flex-shrink-0 text-muted-foreground"
+                />
+              </button>
+            </CardContent>
+          </Card>
+        </div>
+      {/each}
+    </div>
+  {/if}
 </div>

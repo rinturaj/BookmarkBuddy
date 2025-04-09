@@ -1,5 +1,15 @@
 import Browser from "webextension-polyfill";
-
+export const bookmarkFolders: string[] = [
+  "Productivity",
+  "Research",
+  "Newss",
+  "Entertainment",
+  "Shopping",
+  "SocialMedia",
+  "Finance",
+  "Tools",
+  "Utilities",
+];
 export function getFaviconFromUrl(url: string): string {
   try {
     const domain = new URL(url).origin;
@@ -16,17 +26,6 @@ export async function createFolder(parentId: string, title: string) {
 }
 
 async function createDefaultCategories(id: string | undefined) {
-  const bookmarkFolders: string[] = [
-    "📂 Work & Productivity",
-    "📚 Learning & Research",
-    "📰 News & Updates",
-    "🎬 Entertainment & Leisure",
-    "🛒 Shopping & Deals",
-    "📱 Social Media & Networking",
-    "💰 Finance & Banking",
-    "🛠️ Tools & Utilities",
-  ];
-
   const folders = await bookmarkFolders.map(async (x) => {
     const y = createFolder(id || "", x);
     return y;
@@ -81,8 +80,6 @@ export async function getCategory(): Promise<{
 }
 
 export async function bookmarkUrl(url: string, title: any, category: string) {
-  const domain = new URL(url).hostname;
-
   let bookmarks = await Browser.bookmarks.getTree();
 
   let bookmarkBuddy = findFolder(bookmarks[0], "BookmarkBuddy");
@@ -113,8 +110,6 @@ export async function getOrCreateFolder(
 ) {
   let results = await Browser.bookmarks.search({ title });
   let folder = results.find((b) => !b.url && b.parentId === parentId);
-  console.log();
-
   if (folder) return folder; // Folder exists
 
   return Browser.bookmarks.create({ parentId, title });
@@ -122,8 +117,6 @@ export async function getOrCreateFolder(
 
 export async function getCurrenttab() {
   const tab = await Browser.tabs.query({ active: true, currentWindow: true });
-  console.log(tab);
-
   return tab[0];
 }
 
@@ -144,8 +137,6 @@ export async function getBookmarks() {
       });
     })
   );
-  console.log(allSubfolders);
-
   // Flatten the array of subfolders
   return allSubfolders.flat();
 }
@@ -154,4 +145,20 @@ export async function getRecentBookmarks(
 ): Promise<Browser.Bookmarks.BookmarkTreeNode[]> {
   const recentBookmarks = await Browser.bookmarks.getRecent(limit);
   return recentBookmarks;
+}
+
+export async function getAllUrlKeys(): Promise<string[]> {
+  const allData = await Browser.storage.local.get();
+  const urlRegex = /^https?:\/\/[^\s/$.?#].[^\s]*$/;
+
+  return Object.keys(allData).filter((key) => urlRegex.test(key));
+}
+
+export async function getDataByUrlKeys(
+  urls: string[]
+): Promise<Record<string, any>> {
+  if (urls.length === 0) return {};
+
+  const data = await Browser.storage.local.get(urls);
+  return data;
 }

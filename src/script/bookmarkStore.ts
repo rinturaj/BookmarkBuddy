@@ -1,80 +1,67 @@
-import { writable } from "svelte/store";
+import { derived, writable } from "svelte/store";
 import textEmbedder from "./textEmbedder";
+import Browser from "webextension-polyfill";
+import { ACTION } from "../const";
 
 export const bookmarks = writable<any[]>([]);
+export const searchResult = writable<any[]>([]);
 
-function cosineSimilarity(a: number[], b: number[]) {
-  let dot = 0,
-    normA = 0,
-    normB = 0;
-  for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
+Browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  if (message.action === ACTION.UPDATE_VECTORS) {
+    console.log("Update vectors action received");
+    await loadBookmarks();
   }
-  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
-}
+});
 
 export async function loadBookmarks() {
-  // dummy data (you can load from chrome.storage later)
-  const list: any = [
-    {
-      title: "React Guide",
-      url: "https://reactjs.org",
-      description: "Official React hooks intro",
-      createdAt: "2025-04-01",
-      embedding: null,
-    },
-    {
-      title: "Svelte Tutorial",
-      url: "https://svelte.dev",
-      description: "Interactive Svelte learning",
-      createdAt: "2025-03-27",
-      embedding: null,
-    },
-  ];
-  await textEmbedder.initialize({
-    onProgress: (progress: any) => {
-      console.log(`Model loading progress: ${progress.progress * 100}%`);
-    },
-  });
-  for (let b of list) {
-    b.embedding = await callMiniLLm(`${b.title} ${b.description} `);
+  if (!textEmbedder.isLoaded) {
+    await textEmbedder.initialize({
+      onProgress: (progress: any) => {
+        console.log(`Model loading progress: ${progress.progress * 100}%`);
+      },
+    });
   }
 
-  bookmarks.set(list);
+  // Get all URL keys
+  const urlKeys = await getAllUrlKeys();
+
+  // Get data for all URLs
+  const bookmarkData = await getDataByUrlKeys(urlKeys);
+  if (!bookmarkData) {
+    return;
+  }
+  bookmarks.set(bookmarkData);
+}
+export async function getDataByUrlKeys(urls: string[]): Promise<any[] | null> {
+  if (urls.length === 0) return null;
+
+  return Promise.all(
+    urls.map(async (url) => {
+      const data = await Browser.storage.local.get(urls);
+      return data[url];
+    })
+  );
+}
+export async function getAllUrlKeys(): Promise<string[]> {
+  const allData = await Browser.storage.local.get();
+  const urlRegex = /^https?:\/\/[^\s/$.?#].[^\s]*$/;
+
+  return Object.keys(allData).filter((key) => urlRegex.test(key));
 }
 
 export async function searchBookmarks(query: string, list: any[]) {
   const queryEmbedding = await callMiniLLm(query);
-  // console.log("Query Embedding:", queryEmbedding);
-
-  return list
+  const result = list
     .map((b) => ({
       ...b,
-      score: cosineSimilarity(queryEmbedding, b.embedding),
+      score: textEmbedder.cosineSimilarity(queryEmbedding, b.embedding),
     }))
     .sort((a, b) => b.score - a.score)
-    .slice(0, 5);
+    .slice(0, 10);
+  searchResult.set(result);
+  return result;
 }
 
-async function callMiniLLm(text: any) {
-  // const apiKey = import.meta.env.VITE_API_KEY; // Use environment variables for security in production
-
-  // const res = await fetch(
-  //   "https://api.cloudflare.com/client/v4/accounts/bc3e2bd76b264a0fa43a0ecb31ce72e5/ai/run/@cf/baai/bge-m3",
-  //   {
-  //     method: "POST",
-  //     body: JSON.stringify({ text: text }),
-  //     headers: {
-  //       Authorization: `Bearer ${apiKey}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //   }
-  // );
-  // const embedding = await res.json();
-  // //   debugger;
-  // return embedding?.result?.data[0];
-
+export async function callMiniLLm(text: any) {
   return await textEmbedder.embedText(text);
 }

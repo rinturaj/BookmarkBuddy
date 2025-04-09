@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { Trash2 } from "lucide-svelte";
+  import { ExternalLink, Trash2 } from "lucide-svelte";
   import { fade } from "svelte/transition";
   import Button from "../../lib/components/ui/button/button.svelte";
   import { getFaviconFromUrl } from "../../script/bookmark.util";
+  import Separator from "../../lib/components/ui/separator/separator.svelte";
 
   export let bookmarkDetails;
   export let removeBookmark;
@@ -46,10 +47,16 @@
       {/each}
     </ul>
   </div>
-  <div class="flex justify-end gap-2">
-    <Button variant="destructive" size="sm" on:click={removeBookmark}>
-      <Trash2 class="h-3.5 w-3.5 mr-1" />
-      Remove
+  <div class="flex align-middle items-center justify-end gap-2">
+    <span class="text-xs text-muted-foreground"
+      >Created On {new Date(bookmarkDetails.dateAdded).toDateString()}</span
+    >
+    <Separator orientation="vertical"></Separator>
+    <Button variant="ghost" size="icon" on:click={removeBookmark}>
+      <ExternalLink class="h-3.5 w-3.5 text-primary" />
+    </Button>
+    <Button variant="ghost" size="icon" on:click={removeBookmark}>
+      <Trash2 class="h-3.5 w-3.5 text-red-600" />
     </Button>
   </div>
 </div>
