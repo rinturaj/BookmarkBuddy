@@ -5,7 +5,7 @@ export async function callAiapi(pageDetails: any) {
   let bookmarkFolders = bookmarkBuddyFolder.folders.map((x: any) => x.title);
   const apiUrl =
     "https://api.cloudflare.com/client/v4/accounts/bc3e2bd76b264a0fa43a0ecb31ce72e5/ai/run/@cf/meta/llama-3-8b-instruct";
-  const apiKey = import.meta.env.VITE_API_KEY; // Use environment variables for security in production
+  const apiKey = import.meta.env.VITE_API_KEY;
 
   let prompt = `You are a website description bot.
      
@@ -37,7 +37,7 @@ export async function callAiapi(pageDetails: any) {
       },
       {
         role: "user",
-        content: pageDetails.url, // Use the URL from the function argument
+        content: pageDetails.url,
       },
     ],
   };
@@ -48,7 +48,6 @@ export async function callAiapi(pageDetails: any) {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        // 'Cookie': '__cf_bm=...' // Include if necessary, but generally not recommended to hardcode
       },
       body: JSON.stringify(requestBody),
     });

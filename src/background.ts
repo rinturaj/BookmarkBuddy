@@ -2,6 +2,8 @@ import browser from "webextension-polyfill";
 import { ACTION } from "./const";
 import { callMiniLLm } from "./script/bookmarkStore";
 import textEmbedder from "./script/textEmbedder";
+import { callAiapi } from "./script/ai";
+import { bookmarkUrl } from "./script/bookmark.util";
 console.log("Background script loaded!");
 
 textEmbedder.initialize({
@@ -10,8 +12,56 @@ textEmbedder.initialize({
   },
 });
 
-browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  console.log("Message received:", message);
+browser.runtime.onMessage.addListener(async (message, sender) => {
+  console.log("Message received:", message, sender);
+
+  if (message.action === ACTION.BOOKMARK_URL) {
+    const currentPage = message.data;
+    let bookmarkDetails = await callAiapi(currentPage);
+
+    const jsonMatch = bookmarkDetails?.result?.response.match(/{[\s\S]*}/);
+    if (jsonMatch) {
+      const jsonString = jsonMatch[0];
+      const jsonObject = JSON.parse(jsonString);
+      bookmarkDetails = jsonObject;
+
+      const book = await bookmarkUrl(
+        currentPage.url,
+        bookmarkDetails.title,
+        bookmarkDetails.category
+      );
+
+      bookmarkDetails = {
+        ...bookmarkDetails,
+        ...book,
+      };
+
+      // Generate embedding for the bookmark
+      try {
+        bookmarkDetails.embedding = await callMiniLLm(
+          `title: ${bookmarkDetails.title} , category: ${
+            bookmarkDetails.details
+          } , category: ${bookmarkDetails.category} , url: ${
+            bookmarkDetails.url
+          } , createdAt: ${new Date(bookmarkDetails.dateAdded).toISOString()}`
+        );
+      } catch (error) {
+        console.error("Error generating embedding:", error);
+      }
+
+      // Store the bookmark
+      let value = { [bookmarkDetails.url]: bookmarkDetails };
+      await browser.storage.local.set(value);
+
+      // Notify other parts of the extension
+      browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
+      browser.runtime.sendMessage({ action: ACTION.UPDATE_VECTORS });
+      return Promise.resolve({ success: true, bookmarkDetails });
+    } else {
+      return Promise.resolve({ success: false, bookmarkDetails });
+    }
+  }
+
   if (message.action === ACTION.BOOKMARK_UPDATE) {
     let bookmarkDetails = message.data;
     try {
@@ -29,7 +79,9 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     await browser.storage.local.set(value);
     browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
     browser.runtime.sendMessage({ action: ACTION.UPDATE_VECTORS });
+    // return true; // Keep the message channel open for async response
   }
+  return Promise.resolve();
 });
 // Create context menu when the extension is installed
 browser.runtime.onInstalled.addListener(async () => {

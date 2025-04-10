@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Browser from "webextension-polyfill";
+  import browser from "webextension-polyfill";
   import BookmarkCard from "./BookmarkCard.svelte";
   import LoadingIndicator from "./LoadingIndicator.svelte";
   import NotBookmarkedAlert from "./NotBookmarkedAlert.svelte";
@@ -16,11 +16,12 @@
 
   export let isSideBar = false;
   async function getCurrentTabDetails() {
+    isLoading = false;
     currentTab = await getCurrenttab();
     currentPage.favicon = currentTab.favIconUrl || "";
     currentPage.url = currentTab.url || "";
     currentPage.title = currentTab.title || "";
-    const v = await Browser.storage.local.get(currentPage.url.toString());
+    const v = await browser.storage.local.get(currentPage.url.toString());
     bookmarkDetails = v[currentPage.url.toString()];
     isBookmarked = !!bookmarkDetails ? true : false;
   }
@@ -35,7 +36,7 @@
 
   onMount(async () => {
     await getCurrentTabDetails();
-    Browser.runtime.onMessage.addListener(
+    browser.runtime.onMessage.addListener(
       async (message, sender, sendResponse) => {
         console.log("AI Messages");
 
@@ -50,14 +51,20 @@
           await getCurrentTabDetails();
         }
         if (message.action === ACTION.BOOKMARK_URL && isSideBar == false) {
+          isLoading = false;
           await handleBookmark();
+        }
+        if (message.action === ACTION.UPDATE_VECTORS) {
+          showSuccess = true;
+          setTimeout(() => {
+            showSuccess = false;
+          }, 2000);
         }
       }
     );
   });
 
   let bookmarkDetails: any;
-  // State management
   let isBookmarked = false; // Set to true to test the bookmarked state
   let isLoading = false;
   let progress = 0;
@@ -70,9 +77,10 @@
   // Function to handle bookmark action
   async function handleBookmark() {
     if (isBookmarked) {
-      const v = await Browser.storage.local.get(currentPage.url.toString());
+      const v = await browser.storage.local.get(currentPage.url.toString());
       bookmarkDetails = v[currentPage.url.toString()];
       isBookmarked = !!bookmarkDetails ? true : false;
+      isLoading = false;
       return;
     }
     isLoading = true;
@@ -84,37 +92,9 @@
       }
     }, 50);
 
-    bookmarkDetails = await callAiapi(currentPage);
-    clearInterval(interval);
-
-    const jsonMatch = bookmarkDetails?.result?.response.match(/{[\s\S]*}/);
-    if (jsonMatch) {
-      const jsonString = jsonMatch[0];
-      const jsonObject = JSON.parse(jsonString);
-      bookmarkDetails = jsonObject;
-      progress = 40;
-      const book = await bookmarkUrl(
-        currentPage.url,
-        bookmarkDetails.title,
-        bookmarkDetails.category
-      );
-      bookmarkDetails = {
-        ...bookmarkDetails,
-        ...book,
-      };
-      progress += 25;
-    }
-
-    isLoading = false;
-    isBookmarked = true;
-    showSuccess = true;
-    setTimeout(() => {
-      showSuccess = false;
-    }, 2000);
-    progress += 25;
-    await Browser.runtime.sendMessage({
-      action: ACTION.BOOKMARK_UPDATE,
-      data: bookmarkDetails,
+    await browser.runtime.sendMessage({
+      action: ACTION.BOOKMARK_URL,
+      data: currentPage,
     });
   }
 
