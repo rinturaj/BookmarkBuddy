@@ -12,6 +12,7 @@
   import { ACTION } from "../../const";
   import { onMount } from "svelte";
   import { callAiapi } from "../../script/ai";
+  import { getDataByUrlKeys } from "../../script/bookmarkStore";
 
   export let isSideBar = false;
   async function getCurrentTabDetails() {
@@ -48,6 +49,9 @@
         if (message.action === ACTION.UPDATE_TABS) {
           await getCurrentTabDetails();
         }
+        if (message.action === ACTION.BOOKMARK_URL) {
+          await handleBookmark();
+        }
       }
     );
   });
@@ -65,6 +69,12 @@
 
   // Function to handle bookmark action
   async function handleBookmark() {
+    if (isBookmarked) {
+      const v = await Browser.storage.local.get(currentPage.url.toString());
+      bookmarkDetails = v[currentPage.url.toString()];
+      isBookmarked = !!bookmarkDetails ? true : false;
+      return;
+    }
     isLoading = true;
     progress = 0;
     const interval = setInterval(() => {
@@ -73,6 +83,7 @@
         clearInterval(interval);
       }
     }, 50);
+
     bookmarkDetails = await callAiapi(currentPage);
     clearInterval(interval);
 

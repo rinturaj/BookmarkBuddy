@@ -48,9 +48,9 @@
     </ul>
   </div>
   <div class="flex align-middle items-center justify-end gap-2">
-    <span class="text-xs text-muted-foreground"
-      >Created On {new Date(bookmarkDetails.dateAdded).toDateString()}</span
-    >
+    <!-- <span class="text-xs text-muted-foreground">
+      {new Date(bookmarkDetails?.dateAdded).toDateString()}</span> -->
+
     <Separator orientation="vertical"></Separator>
     <Button variant="ghost" size="icon" on:click={removeBookmark}>
       <ExternalLink class="h-3.5 w-3.5 text-primary" />

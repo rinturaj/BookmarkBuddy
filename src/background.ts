@@ -47,16 +47,18 @@ browser.runtime.onInstalled.addListener(async () => {
 
 // Listen for clicks on the context menu
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (
-    info.menuItemId === "sendTextToExtension" ||
-    info.menuItemId === "bookMarkPage"
-  ) {
+  // if(info.menuItemId === "sendTextToExtension")
+  if (info.menuItemId === "bookMarkPage") {
     browser.storage.local.set({
       action: info.menuItemId,
       text: info.selectionText,
       url: tab?.url,
     });
-    await chrome.sidePanel.open({ tabId: tab?.id || 0 });
+    await browser.action.openPopup();
+    await browser.runtime.sendMessage({
+      action: ACTION.BOOKMARK_URL,
+      data: { url: tab?.url },
+    });
   }
 });
 

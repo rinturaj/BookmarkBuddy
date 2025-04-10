@@ -154,11 +154,11 @@ export async function getAllUrlKeys(): Promise<string[]> {
   return Object.keys(allData).filter((key) => urlRegex.test(key));
 }
 
-export async function getDataByUrlKeys(
-  urls: string[]
-): Promise<Record<string, any>> {
-  if (urls.length === 0) return {};
+// export async function getDataByUrlKeys(
+//   urls: string[]
+// ): Promise<Record<string, any>> {
+//   if (urls.length === 0) return {};
 
-  const data = await Browser.storage.local.get(urls);
-  return data;
-}
+//   const data = await Browser.storage.local.get(urls);
+//   return data;
+// }

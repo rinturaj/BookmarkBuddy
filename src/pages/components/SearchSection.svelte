@@ -31,7 +31,7 @@
 </script>
 
 <!-- Search Bar -->
-<div class="px-4 mb-4 relative">
+<div class="px-2 mb-2 relative">
   <div class="relative">
     <Search
       class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5"
@@ -42,6 +42,5 @@
       placeholder="search here"
       class="pl-10"
     />
-    <!-- <Button onclick={handleSearch}>Search</Button> -->
   </div>
 </div>

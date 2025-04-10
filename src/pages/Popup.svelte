@@ -1,5 +1,12 @@
 <script lang="ts">
-  import { Plus, Save, X } from "lucide-svelte";
+  import {
+    Plus,
+    Save,
+    Search,
+    SearchCheckIcon,
+    Sidebar,
+    X,
+  } from "lucide-svelte";
 
   import { fade, fly } from "svelte/transition";
   import { quintOut } from "svelte/easing";
@@ -18,6 +25,10 @@
   import Browser from "webextension-polyfill";
   import { ACTION } from "../const";
   import { getCurrenttab } from "../script/bookmark.util";
+  import SearchSection from "./components/SearchSection.svelte";
+  import SearchResult from "./components/SearchResult.svelte";
+
+  let toggleView = false;
 
   async function getCurrentTabDetails() {
     currentTab = await getCurrenttab();
@@ -87,18 +98,28 @@
       </div>
     </CardHeader>
 
-    <CardContent>
-      <AiAnalysis></AiAnalysis>
+    <CardContent
+      class={!!toggleView
+        ? "p-0 pt-3 bg-white/50 pb-2 rounded-xl min-h-[200px]"
+        : "p-3 pt-2"}
+    >
+      {#if !toggleView}
+        <AiAnalysis></AiAnalysis>
+      {:else}
+        <SearchSection></SearchSection>
+        <SearchResult isPopup={true}></SearchResult>
+      {/if}
     </CardContent>
 
     <CardFooter class="flex justify-between pt-0">
       <Button
+        onclick={() => (toggleView = !toggleView)}
         variant="ghost"
         size="sm"
         class="hover:bg-primary/10 transition-colors duration-200"
       >
-        <Plus class="h-3.5 w-3.5 mr-1" />
-        New Category
+        <Search class="h-3.5 w-3.5 mr-1" />
+        Search Bookmark
       </Button>
       <Button
         onclick={async () => {
@@ -117,7 +138,7 @@
         size="sm"
         class="hover:bg-primary/10 transition-colors duration-200"
       >
-        <Save class="h-3.5 w-3.5 mr-1" />
+        <Sidebar class="h-3.5 w-3.5 mr-1" />
         Sidepanel
       </Button>
     </CardFooter>
