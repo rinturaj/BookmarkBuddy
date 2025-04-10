@@ -49,7 +49,7 @@
         if (message.action === ACTION.UPDATE_TABS) {
           await getCurrentTabDetails();
         }
-        if (message.action === ACTION.BOOKMARK_URL) {
+        if (message.action === ACTION.BOOKMARK_URL && isSideBar == false) {
           await handleBookmark();
         }
       }
