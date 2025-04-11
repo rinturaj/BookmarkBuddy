@@ -10,6 +10,13 @@
   import AiAnalysis from "./components/AiAnalysis.svelte";
   import Browser from "webextension-polyfill";
   import { ACTION } from "../const";
+  import { onMount } from "svelte";
+  import { initAnalytics, trackPageView } from "../script/analytics";
+
+  onMount(() => {
+    initAnalytics();
+    trackPageView("sidepanel");
+  });
 </script>
 
 <ModeWatcher />

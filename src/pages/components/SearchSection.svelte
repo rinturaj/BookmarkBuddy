@@ -10,6 +10,7 @@
     searchBookmarks,
   } from "../../script/bookmarkStore";
   import { get } from "svelte/store";
+  import { trackEvent } from "../../script/analytics";
   let query = "";
 
   onMount(async () => {
@@ -25,6 +26,11 @@
     debounceTimeout = setTimeout(async () => {
       const list = get(bookmarks);
       searchBookmarks(query, list);
+      trackEvent("search", {
+        id: "bookmark_search",
+        name: "bookmark_search",
+        query: query,
+      });
     }, 500); // Adjust delay as needed
     // handleEnhancedSearch(query, list);
   }

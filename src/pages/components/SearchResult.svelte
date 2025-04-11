@@ -8,6 +8,7 @@
   import BookmarkCard from "./BookmarkCard.svelte";
   import { searchResult } from "../../script/bookmarkStore";
   import { Button } from "$lib/components/ui/button";
+  import { trackEvent } from "../../script/analytics";
 
   export let isPopup = false;
   $: saved = searchResult;
@@ -28,6 +29,11 @@
 
     // Update the store with the new items
     searchResult.set(updatedItems);
+    trackEvent("button_click", {
+      button_id: "view_bookmark",
+      button_name: "View Bookmark",
+      button_text: "View Bookmark",
+    });
 
     // If the item is now expanded, fetch its content
     if (updatedItems.find((item) => item.id === v.id)?.expanded) {

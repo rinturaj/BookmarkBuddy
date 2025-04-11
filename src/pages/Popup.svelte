@@ -27,6 +27,12 @@
   import { getCurrenttab } from "../script/bookmark.util";
   import SearchSection from "./components/SearchSection.svelte";
   import SearchResult from "./components/SearchResult.svelte";
+  import { initAnalytics, trackPageView } from "../script/analytics";
+
+  onMount(() => {
+    initAnalytics();
+    trackPageView("pupup");
+  });
 
   let toggleView = false;
 

@@ -13,6 +13,7 @@
   import { onMount } from "svelte";
   import { callAiapi } from "../../script/ai";
   import { getDataByUrlKeys } from "../../script/bookmarkStore";
+  import { trackEvent } from "../../script/analytics";
 
   export let isSideBar = false;
   async function getCurrentTabDetails() {
@@ -91,7 +92,10 @@
         clearInterval(interval);
       }
     }, 50);
-
+    trackEvent("button_click", {
+      button_id: "bookmark_button",
+      button_text: "Bookmark",
+    });
     await browser.runtime.sendMessage({
       action: ACTION.BOOKMARK_URL,
       data: currentPage,
