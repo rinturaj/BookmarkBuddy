@@ -113,7 +113,7 @@
         <AiAnalysis></AiAnalysis>
       {:else}
         <SearchSection></SearchSection>
-        <SearchResult isPopup={true}></SearchResult>
+        <SearchResult></SearchResult>
       {/if}
     </CardContent>
 

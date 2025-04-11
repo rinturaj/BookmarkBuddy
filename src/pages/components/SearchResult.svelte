@@ -10,7 +10,6 @@
   import { Button } from "$lib/components/ui/button";
   import { trackEvent } from "../../script/analytics";
 
-  export let isPopup = false;
   $: saved = searchResult;
 
   async function toggleExpand(v: any, index: number) {
@@ -58,9 +57,6 @@
   function clearSearch() {
     searchResult.set([]);
   }
-
-  export let imageUrl =
-    "https://cdn-icons-png.flaticon.com/512/1828/1828884.png"; // Bookmark icon or 'no bookmarks' illustration
 </script>
 
 <div class="px-2">
