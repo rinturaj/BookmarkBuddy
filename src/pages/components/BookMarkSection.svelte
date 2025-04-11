@@ -118,8 +118,7 @@
                     srcset=""
                   />
                   <div class="flex flex-col flex-grow min-w-0">
-                    <span
-                      class="text-sm font-medium font-medium truncate flex-grow min-w-0"
+                    <span class="text-sm font-medium truncate flex-grow min-w-0"
                       >{item?.title || item?.url}</span
                     >
                     <span

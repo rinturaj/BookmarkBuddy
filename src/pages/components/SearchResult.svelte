@@ -6,9 +6,17 @@
   import Badge from "../../lib/components/ui/badge/badge.svelte";
   import Browser from "webextension-polyfill";
   import BookmarkCard from "./BookmarkCard.svelte";
-  import { searchResult } from "../../script/bookmarkStore";
+  import {
+    isSearching,
+    modelProgress,
+    searchResult,
+    searchStatus,
+  } from "../../script/bookmarkStore";
   import { Button } from "$lib/components/ui/button";
   import { trackEvent } from "../../script/analytics";
+  import Spinner from "../../components/Spinner.svelte";
+  import { fly } from "svelte/transition";
+  import { quintInOut } from "svelte/easing";
 
   $: saved = searchResult;
 
@@ -62,13 +70,35 @@
 <div class="px-2">
   {#if $saved.length !== 0}
     <div class="flex items-center justify-between mb-2">
-      <h4 class="text-lg font-semibold">Search Result</h4>
+      <div class="flex">
+        <h4 class="text-lg font-semibold">Search Result</h4>
+        <span class="mx-2">
+          {#if $isSearching}
+            <Spinner />
+          {/if}
+        </span>
+        <!-- <small>{$searchStatus}</small> -->
+      </div>
+
       <Button variant="ghost" size="sm" onclick={clearSearch}>
         <X class=" h-4" />
         Clear
       </Button>
     </div>
   {/if}
+
+  <!-- {#if $isSearching}
+    <div
+      class="search-status"
+      in:fly={{ y: 20, duration: 400, easing: quintInOut }}
+    >
+      {#if $modelProgress < 100}
+        <div class="progress">Loading model: {$modelProgress}%</div>
+      {/if}
+    </div>
+  {/if} -->
+
+  <!-- {:else} -->
   {#if $saved.length === 0}
     <div class="flex flex-col items-center justify-center p-6 text-center">
       <img

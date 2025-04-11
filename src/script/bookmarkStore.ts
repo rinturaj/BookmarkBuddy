@@ -5,6 +5,49 @@ import { ACTION } from "../const";
 
 export const bookmarks = writable<any[]>([]);
 export const searchResult = writable<any[]>([]);
+export const isSearching = writable(false);
+export const modelProgress = writable(0);
+export const searchStatus = writable("");
+
+// Create a Web Worker for search operations
+const searchWorker = new Worker(new URL("./searchWorker.ts", import.meta.url), {
+  type: "module",
+});
+
+// Handle messages from the worker
+searchWorker.onmessage = (e) => {
+  const { type, ...data } = e.data;
+
+  switch (type) {
+    case "progress":
+      modelProgress.set(data.progress);
+      searchStatus.set(data.status);
+      break;
+    case "status":
+      searchStatus.set(data.status);
+      break;
+    case "results":
+      searchResult.set(data.results);
+      searchStatus.set(data.status);
+      setTimeout(() => {
+        isSearching.set(false);
+      }, 1000);
+      break;
+    case "error":
+      console.error("Search error:", data.error);
+      searchResult.set([]);
+      searchStatus.set(data.status);
+      isSearching.set(false);
+      break;
+  }
+};
+
+searchWorker.onerror = (error) => {
+  console.error("Worker error:", error);
+  searchResult.set([]);
+  searchStatus.set("Error occurred during search");
+  isSearching.set(false);
+};
 
 Browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === ACTION.UPDATE_VECTORS) {
@@ -21,17 +64,15 @@ export async function loadBookmarks() {
       },
     });
   }
-
-  // Get all URL keys
   const urlKeys = await getAllUrlKeys();
 
-  // Get data for all URLs
   const bookmarkData = await getDataByUrlKeys(urlKeys);
   if (!bookmarkData) {
     return;
   }
   bookmarks.set(bookmarkData);
 }
+
 export async function getDataByUrlKeys(urls: string[]): Promise<any[] | null> {
   if (urls.length === 0) return null;
 
@@ -42,6 +83,7 @@ export async function getDataByUrlKeys(urls: string[]): Promise<any[] | null> {
     })
   );
 }
+
 export async function getAllUrlKeys(): Promise<string[]> {
   const allData = await Browser.storage.local.get();
   const urlRegex = /^https?:\/\/[^\s/$.?#].[^\s]*$/;
@@ -50,18 +92,18 @@ export async function getAllUrlKeys(): Promise<string[]> {
 }
 
 export async function searchBookmarks(query: string, list: any[]) {
-  const queryEmbedding = await callMiniLLm(query);
-  const result = list
-    .map((b) => ({
-      ...b,
-      score: textEmbedder.cosineSimilarity(queryEmbedding, b.embedding),
-    }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 10);
-  searchResult.set(result);
-  return result;
+  isSearching.set(true);
+  modelProgress.set(0);
+  searchStatus.set("Starting search...");
+
+  // Send the search task to the worker
+  searchWorker.postMessage({
+    query,
+    bookmarks: list,
+  });
 }
 
-export async function callMiniLLm(text: any) {
-  return await textEmbedder.embedText(text);
+// Cleanup function to terminate the worker when needed
+export function cleanupSearchWorker() {
+  searchWorker.terminate();
 }

@@ -1,6 +1,5 @@
 import browser from "webextension-polyfill";
 import { ACTION } from "./const";
-import { callMiniLLm } from "./script/bookmarkStore";
 import textEmbedder from "./script/textEmbedder";
 import { callAiapi } from "./script/ai";
 import { bookmarkUrl } from "./script/bookmark.util";
@@ -38,13 +37,12 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
 
       // Generate embedding for the bookmark
       try {
-        bookmarkDetails.embedding = await callMiniLLm(
-          `title: ${bookmarkDetails.title} , category: ${
-            bookmarkDetails.details
-          } , category: ${bookmarkDetails.category} , url: ${
-            bookmarkDetails.url
-          } , createdAt: ${new Date(bookmarkDetails.dateAdded).toISOString()}`
-        );
+        const query = `title: ${bookmarkDetails.title} , category: ${
+          bookmarkDetails.details
+        } , category: ${bookmarkDetails.category} , url: ${
+          bookmarkDetails.url
+        } , createdAt: ${new Date(bookmarkDetails.dateAdded).toISOString()}`;
+        bookmarkDetails.embedding = await textEmbedder.embedText(query);
       } catch (error) {
         console.error("Error generating embedding:", error);
       }
@@ -52,8 +50,6 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
       // Store the bookmark
       let value = { [bookmarkDetails.url]: bookmarkDetails };
       await browser.storage.local.set(value);
-
-      // Notify other parts of the extension
       browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
       browser.runtime.sendMessage({ action: ACTION.UPDATE_VECTORS });
       return Promise.resolve({ success: true, bookmarkDetails });
@@ -65,7 +61,7 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
   if (message.action === ACTION.BOOKMARK_UPDATE) {
     let bookmarkDetails = message.data;
     try {
-      bookmarkDetails.embedding = await callMiniLLm(
+      bookmarkDetails.embedding = await textEmbedder.embedText(
         `title: ${bookmarkDetails.title} , category: ${
           bookmarkDetails.details
         } , category: ${bookmarkDetails.category} , url: ${

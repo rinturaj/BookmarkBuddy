@@ -157,10 +157,7 @@ class TextEmbedder {
    * @param {Object} options Configuration options
    * @returns {Promise<Float32Array>} Embedding vector
    */
-  async embedText(
-    text: { trim: () => { (): any; new (): any; length: number } },
-    options = {}
-  ) {
+  async embedText(text: string, options = {}) {
     if (!text || text.trim().length === 0) {
       // Return zero vector for empty text
       return new Float32Array(this.embeddingDimension);
