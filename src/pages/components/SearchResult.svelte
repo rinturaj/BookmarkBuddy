@@ -69,7 +69,7 @@
   }
 </script>
 
-<div class="px-2">
+<div class="px-2 min-h-[100px]">
   {#if $saved.length !== 0}
     <div class="flex items-center justify-between mb-2">
       <div class="flex">
@@ -150,7 +150,7 @@
     </div>
   {/if}
   {#each $saved as item, index}
-    <div class="mb-2 min-h-[100px]">
+    <div class="mb-2">
       <Card class="p-0">
         <CardContent class="p-0">
           <button
