@@ -1,4 +1,4 @@
-import { derived, writable } from "svelte/store";
+import { derived, get, writable } from "svelte/store";
 import textEmbedder from "./textEmbedder";
 import Browser from "webextension-polyfill";
 import { ACTION } from "../const";
@@ -8,6 +8,7 @@ export const searchResult = writable<any[]>([]);
 export const isSearching = writable(false);
 export const modelProgress = writable(0);
 export const searchStatus = writable("");
+export const activeCategory = writable("");
 
 // Create a Web Worker for search operations
 const searchWorker = new Worker(new URL("./searchWorker.ts", import.meta.url), {
@@ -91,7 +92,7 @@ export async function getAllUrlKeys(): Promise<string[]> {
   return Object.keys(allData).filter((key) => urlRegex.test(key));
 }
 
-export async function searchBookmarks(query: string, list: any[]) {
+export async function searchBookmarks(query: string) {
   isSearching.set(true);
   modelProgress.set(0);
   searchStatus.set("Starting search...");
@@ -99,7 +100,8 @@ export async function searchBookmarks(query: string, list: any[]) {
   // Send the search task to the worker
   searchWorker.postMessage({
     query,
-    bookmarks: list,
+    bookmarks: get(bookmarks),
+    category: get(activeCategory),
   });
 }
 

@@ -17,8 +17,13 @@
   import { onMount } from "svelte";
   import { ACTION } from "../../const";
   import Browser from "webextension-polyfill";
-  import { searchResult } from "../../script/bookmarkStore";
+  import {
+    activeCategory,
+    searchBookmarks,
+    searchResult,
+  } from "../../script/bookmarkStore";
   import Separator from "../../lib/components/ui/separator/separator.svelte";
+  import { get } from "svelte/store";
 
   let viewInput = false;
   let parentFolderId = "";
@@ -29,12 +34,13 @@
     categories = bookmarkBuddyFolder.folders;
     parentFolderId = bookmarkBuddyFolder.parentId;
     recents = await getRecentBookmarks(5);
+    activeCategory.set("");
   });
 
   // Sample data for bookmarks
   let recents: any[] = [];
 
-  let activeCategory: any = null;
+  $: activeC = activeCategory;
 
   Browser.runtime.onMessage.addListener(async (message) => {
     if (message.action === ACTION.UPDATE_TABS) {
@@ -85,8 +91,16 @@
 
       {#each categories as category}
         <Button
+          onclick={() => {
+            if (get(activeCategory) == category.title) {
+              activeCategory.set("");
+            } else {
+              activeCategory.set(category.title);
+            }
+            searchBookmarks("");
+          }}
           class="m-1 p-1 py-1 h-8 text-xs"
-          variant={activeCategory === category.id ? "default" : "outline"}
+          variant={$activeC === category.title ? "default" : "outline"}
           size="sm"
         >
           {category.title}

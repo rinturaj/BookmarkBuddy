@@ -7,6 +7,7 @@
   import Browser from "webextension-polyfill";
   import BookmarkCard from "./BookmarkCard.svelte";
   import {
+    activeCategory,
     isSearching,
     modelProgress,
     searchResult,
@@ -17,8 +18,11 @@
   import Spinner from "../../components/Spinner.svelte";
   import { fly } from "svelte/transition";
   import { quintInOut } from "svelte/easing";
+  import Separator from "../../lib/components/ui/separator/separator.svelte";
 
   $: saved = searchResult;
+  $: searchstts = searchStatus;
+  $: activeC = activeCategory;
 
   async function toggleExpand(v: any, index: number) {
     console.log("toggle");
@@ -60,8 +64,6 @@
     }
   }
 
-  function removeBookmark() {}
-
   function clearSearch() {
     searchResult.set([]);
   }
@@ -87,17 +89,6 @@
     </div>
   {/if}
 
-  <!-- {#if $isSearching}
-    <div
-      class="search-status"
-      in:fly={{ y: 20, duration: 400, easing: quintInOut }}
-    >
-      {#if $modelProgress < 100}
-        <div class="progress">Loading model: {$modelProgress}%</div>
-      {/if}
-    </div>
-  {/if} -->
-
   <!-- {:else} -->
   {#if $saved.length === 0}
     <div class="flex flex-col items-center justify-center p-6 text-center">
@@ -106,10 +97,34 @@
         alt="No data found"
         class="w-12 h-12 mb-4 opacity-70"
       />
-      <h3 class="text-lg font-semibold mb-2">Discover Your Bookmarks</h3>
+      <h1 class="text-sm font-semibold mb-2">
+        {$searchstts}
+        {$searchstts == "Search completed" && $saved.length === 0
+          ? "but no results found"
+          : ""}
+      </h1>
+      <Separator class="border border-primary/10"></Separator>
+      <h3 class="text-lg font-semibold mb-2">
+        {$activeC === ""
+          ? "Discover Your Bookmarks"
+          : `No Bookmarks in ${$activeC}`}
+      </h3>
       <p class="text-sm text-muted-foreground mb-4">
         Try searching with natural language to find exactly what you need
       </p>
+
+      {#if $isSearching}
+        <div
+          class="search-status"
+          in:fly={{ y: 20, duration: 400, easing: quintInOut }}
+        >
+          {#if $modelProgress < 100}
+            <div class="progress">
+              Please wailt while we are loading model: {$modelProgress}%
+            </div>
+          {/if}
+        </div>
+      {/if}
 
       <div class="space-y-2 w-full max-w-md">
         <p class="text-xs text-muted-foreground">Try searching for:</p>
@@ -135,7 +150,7 @@
     </div>
   {/if}
   {#each $saved as item, index}
-    <div class="mb-2">
+    <div class="mb-2 min-h-[100px]">
       <Card class="p-0">
         <CardContent class="p-0">
           <button
@@ -173,8 +188,7 @@
               class="pl-4 pr-4 py-2 text-muted-foreground border-l-2 border-muted ml-3"
             >
               <Badge variant="secondary">{item.category}</Badge>
-              <BookmarkCard {removeBookmark} bookmarkDetails={item.content}
-              ></BookmarkCard>
+              <BookmarkCard bookmarkDetails={item.content}></BookmarkCard>
             </div>
           {/if}
         </CardContent>

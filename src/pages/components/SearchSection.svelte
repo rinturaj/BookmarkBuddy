@@ -25,7 +25,7 @@
     // Start a new timer
     debounceTimeout = setTimeout(async () => {
       const list = get(bookmarks);
-      searchBookmarks(query, list);
+      searchBookmarks(query);
       trackEvent("search", {
         id: "bookmark_search",
         name: "bookmark_search",

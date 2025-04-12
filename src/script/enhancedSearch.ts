@@ -65,6 +65,7 @@ function getDateRangeFromReference(timeRef: any) {
       start.setDate(start.getDate() - 7 - today.getDay());
       const end = new Date(start);
       end.setDate(end.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
       return { start, end };
     }
     case "this_week": {
@@ -72,30 +73,39 @@ function getDateRangeFromReference(timeRef: any) {
       start.setDate(start.getDate() - today.getDay());
       const end = new Date(start);
       end.setDate(end.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
       return { start, end };
     }
     case "last_month": {
       const start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       const end = new Date(today.getFullYear(), today.getMonth(), 0);
+      end.setHours(23, 59, 59, 999);
       return { start, end };
     }
     case "this_month": {
       const start = new Date(today.getFullYear(), today.getMonth(), 1);
       const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      end.setHours(23, 59, 59, 999);
       return { start, end };
     }
     case "yesterday": {
       const start = new Date(today);
       start.setDate(start.getDate() - 1);
-      return { start, end: start };
+      const end = new Date(start);
+      end.setHours(23, 59, 59, 999);
+      return { start, end };
     }
     case "today": {
-      return { start: today, end: today };
+      const end = new Date(today);
+      end.setHours(23, 59, 59, 999);
+      return { start: today, end };
     }
     case "days_ago": {
       const start = new Date(today);
       start.setDate(start.getDate() - timeRef.value);
-      return { start, end: start };
+      const end = new Date(start);
+      end.setHours(23, 59, 59, 999);
+      return { start, end };
     }
     default:
       return null;

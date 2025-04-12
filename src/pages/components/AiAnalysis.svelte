@@ -102,20 +102,6 @@
     });
   }
 
-  // Function to remove bookmark
-  function removeBookmark() {
-    isLoading = true;
-    progress = 0;
-    const interval = setInterval(() => {
-      progress += 5;
-      if (progress >= 100) {
-        clearInterval(interval);
-        isLoading = false;
-        isBookmarked = false;
-      }
-    }, 50);
-  }
-
   // Extract domain from URL
   function getDomain(url: any) {
     try {
@@ -171,7 +157,7 @@
   <LoadingIndicator {isLoading} {progress} {isBookmarked} />
   <SuccessAlert {showSuccess} />
   {#if isBookmarked}
-    <BookmarkCard {bookmarkDetails} {removeBookmark} />
+    <BookmarkCard {bookmarkDetails} />
   {:else if !isLoading}
     <NotBookmarkedAlert {onCancel} {onConfirm} />
   {/if}
