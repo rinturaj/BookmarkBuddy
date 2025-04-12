@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Bookmark, Cross, Delete, ExternalLink, Trash } from "lucide-svelte";
+  import { ExternalLink, Trash } from "lucide-svelte";
   import { Card, CardContent } from "$lib/components/ui/card";
   import { onMount } from "svelte";
   import Browser from "webextension-polyfill";
@@ -24,12 +24,14 @@
   async function fetchTabs() {
     const queriedTabs = await Browser.tabs.query({});
     if (!queriedTabs) return;
-    activeTabs = queriedTabs.map((tab: any) => ({
-      id: tab.id,
-      title: tab.title,
-      url: tab.url,
-      favicon: tab.favIconUrl,
-    }));
+    activeTabs = queriedTabs
+      .map((tab: any) => ({
+        id: tab.id,
+        title: tab.title,
+        url: tab.url,
+        favicon: tab.favIconUrl,
+      }))
+      .filter((tab: Tab) => tab.url && !tab.url.includes("chrome://"));
   }
 
   onMount(async () => {
@@ -65,41 +67,28 @@
             </div>
             <div class="flex items-center flex-shrink-0 gap-1">
               <Button
-                on:click={() => {
-                  console.log(tab.url);
-                }}
+                href={tab?.url}
+                target="_blank"
                 variant="ghost"
                 size="icon"
                 class="h-8 w-8"
               >
                 <ExternalLink class="h-4 w-4" />
               </Button>
+
               <Button
+                role="button"
                 variant="ghost"
                 size="icon"
-                class="h-8 w-8"
-                on:click={() => {
-                  saveCurrentTab;
-                }}
-              >
-                <Bookmark class="h-4 w-4" />
-              </Button>
-              <button
-                on:click={() => {
+                class="h-8 w-8 text-red-400"
+                onclick={() => {
                   console.log("Test");
 
                   closeTab(tab?.id);
                 }}
               >
-                <Button
-                  role="button"
-                  variant="ghost"
-                  size="icon"
-                  class="h-8 w-8 text-red-400"
-                >
-                  <Trash class="h-4 w-4" />
-                </Button>
-              </button>
+                <Trash class="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </CardContent>

@@ -14,6 +14,8 @@
   import { callAiapi } from "../../script/ai";
   import { getDataByUrlKeys } from "../../script/bookmarkStore";
   import { trackEvent } from "../../script/analytics";
+  import * as Accordion from "$lib/components/ui/accordion/index";
+  import Button from "../../lib/components/ui/button/button.svelte";
 
   export let isSideBar = false;
   async function getCurrentTabDetails() {
@@ -122,7 +124,10 @@
     }, 1000);
   }
 
-  function onCancel() {}
+  let isCollapsed = false;
+  function onCancel() {
+    isCollapsed = true;
+  }
   function onConfirm() {
     console.log("Book marked");
     handleBookmark();
@@ -158,8 +163,15 @@
   <SuccessAlert {showSuccess} />
   {#if isBookmarked}
     <BookmarkCard {bookmarkDetails} />
-  {:else if !isLoading}
+  {:else if !isLoading && !isCollapsed}
     <NotBookmarkedAlert {onCancel} {onConfirm} />
+  {:else if !isLoading && isCollapsed}
+    <Button
+      variant="ghost"
+      onclick={onConfirm}
+      class="w-full bg-secondary/20 text-prumary"
+      size="sm">Click here to bookmark this page</Button
+    >
   {/if}
   <RelatedBookmarks {currentPage} {relatedBookmarks} {getDomain} />
 </div>

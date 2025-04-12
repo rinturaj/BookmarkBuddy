@@ -121,7 +121,9 @@
         <div class="mb-2">
           <Card class="p-0">
             <CardContent class="p-0">
-              <button
+              <a
+                href={item?.url}
+                target="_blank"
                 class="w-full hover:bg-muted cursor-pointer rounded-lg flex items-center justify-between p-2 flex-grow min-w-0 text-left"
               >
                 <div class="flex items-center gap-2 flex-grow min-w-0">
@@ -145,7 +147,7 @@
                 <ExternalLink
                   class="w-5 h-5 flex-shrink-0 text-muted-foreground"
                 />
-              </button>
+              </a>
             </CardContent>
           </Card>
         </div>

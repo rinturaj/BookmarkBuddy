@@ -12,7 +12,7 @@
 </script>
 
 <Alert
-  class="mt-4 rounded-xl border dark:border-white border-primary/30 bg-primary/10 px-4 py-4 text-primary dark:bg-muted-foreground/10 dark:text-white shadow-sm"
+  class="m-0 rounded-xl border dark:border-white border-primary/30 bg-primary/10 px-4 py-4 text-primary dark:bg-muted-foreground/10 dark:text-white shadow-sm"
 >
   <div class="flex items-start gap-3">
     <!-- Icon -->

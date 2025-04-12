@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import Browser from "webextension-polyfill";
   import { ACTION } from "../../const";
+  import { getFaviconFromUrl } from "../../script/bookmark.util";
 
   let frequentLinks: any[] = [];
 
@@ -51,13 +52,22 @@
           target="_blank"
           class="flex items-center justify-between gap-3 p-2 hover:bg-muted cursor-pointer rounded-md transition-colors"
         >
-          <!-- <div class="text-foreground">
-            {@html getIcon(suggestion.icon)}
-          </div> -->
-          <span class="text-sm truncate max-w-[200px]">{suggestion.title}</span>
+          <div class="flex items-center gap-2">
+            <div class="text-foreground">
+              <img
+                src={getFaviconFromUrl(suggestion.url)}
+                alt=""
+                class="h-[16px]"
+                srcset=""
+              />
+            </div>
+            <span class="text-sm truncate max-w-[200px]"
+              >{suggestion.title}</span
+            >
+          </div>
           <div>
-            <span>Visits</span>
-            <span>{suggestion.visitCount}</span>
+            <span class="text-xs">Visits</span>
+            <span class="font-bold text-sm">{suggestion.visitCount}</span>
           </div>
         </a>
       {/each}

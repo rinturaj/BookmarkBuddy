@@ -104,11 +104,17 @@
           : ""}
       </h1>
       <Separator class="border border-primary/10"></Separator>
-      <h3 class="text-lg font-semibold mb-2">
-        {$activeC === ""
-          ? "Discover Your Bookmarks"
-          : `No Bookmarks in ${$activeC}`}
-      </h3>
+      {#if $activeC === ""}
+        <h3 class="text-lg mt-1 font-semibold mb-2">Discover Your Bookmarks</h3>
+      {:else}
+        <h3 class="text-lg mt-1 font-semibold mb-2">
+          No Bookmarks in <span
+            class="bg-primary/10 text-primary px-2 py-1 rounded-md"
+            >{$activeC}</span
+          >
+        </h3>
+      {/if}
+
       <p class="text-sm text-muted-foreground mb-4">
         Try searching with natural language to find exactly what you need
       </p>
