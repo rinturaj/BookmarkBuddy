@@ -2,7 +2,7 @@ import browser from "webextension-polyfill";
 import { ACTION } from "./const";
 import textEmbedder from "./script/textEmbedder";
 import { callAiapi } from "./script/ai";
-import { bookmarkUrl } from "./script/bookmark.util";
+import { bookmarkUrl, getFaviconFromUrl } from "./script/bookmark.util";
 console.log("Background script loaded!");
 
 textEmbedder.initialize({
@@ -134,9 +134,18 @@ chrome.omnibox.onInputEntered.addListener(async (text, sugges) => {
   chrome.bookmarks.create({ title: "Quick Bookmark", url });
 });
 
-chrome.omnibox.onInputChanged.addListener((text, suggest) => {
-  suggest([
-    { content: "https://google.com", description: "🔍 Google" },
-    { content: "https://github.com", description: "💻 GitHub" },
-  ]);
+chrome.omnibox.onInputChanged.addListener(async (text, suggest) => {
+  // Get recent bookmarks
+  const recentBookmarks = await chrome.bookmarks.search(text);
+
+  // Format suggestions
+  const suggestions = recentBookmarks
+    .filter((bookmark) => bookmark.url) // Filter out bookmarks without URLs
+    .map((bookmark) => ({
+      content: bookmark.url || "", // Ensure content is always a string
+      description: `${bookmark.title}`,
+      // icon: getFaviconFromUrl(bookmark.url || ""), // Use a default icon if URL is not available
+    }));
+
+  suggest(suggestions);
 });

@@ -31,10 +31,6 @@
   "side_panel": {
     "default_path": "src/sidepanel/sidepanel.html"
   },
-  "sidebar_action": {
-    "default_panel": "src/sidepanel/sidepanel.html",
-    "default_title": "My Sidebar"
-  },
   "{{chrome}}.action": {
     "default_popup": "src/popup/popup.html"
   },
