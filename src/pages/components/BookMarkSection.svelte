@@ -24,6 +24,8 @@
   } from "../../script/bookmarkStore";
   import Separator from "../../lib/components/ui/separator/separator.svelte";
   import { get } from "svelte/store";
+  import { flyScaleFade } from "../../script/animation";
+  import { quintInOut } from "svelte/easing";
 
   let viewInput = false;
   let parentFolderId = "";
@@ -89,22 +91,31 @@
         {/if}
       </Button>
 
-      {#each categories as category}
-        <Button
-          onclick={() => {
-            if (get(activeCategory) == category.title) {
-              activeCategory.set("");
-            } else {
-              activeCategory.set(category.title);
-            }
-            searchBookmarks("");
+      {#each categories as category, index}
+        <div
+          class="m-1"
+          in:flyScaleFade={{
+            delay: index * 500,
+            duration: 350,
+            easing: quintInOut,
           }}
-          class="m-1 p-1 py-1 h-8 text-xs"
-          variant={$activeC === category.title ? "default" : "outline"}
-          size="sm"
         >
-          {category.title}
-        </Button>
+          <Button
+            onclick={() => {
+              if (get(activeCategory) == category.title) {
+                activeCategory.set("");
+              } else {
+                activeCategory.set(category.title);
+              }
+              searchBookmarks("");
+            }}
+            class=" p-1 py-1 h-8 text-xs"
+            variant={$activeC === category.title ? "default" : "outline"}
+            size="sm"
+          >
+            {category.title}
+          </Button>
+        </div>
       {/each}
     </div>
   </ScrollArea>

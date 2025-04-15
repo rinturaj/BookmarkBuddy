@@ -66,6 +66,9 @@
 
   function clearSearch() {
     searchResult.set([]);
+    searchStatus.set("Result Cleared");
+    activeCategory.set("");
+    isSearching.set(false);
   }
 </script>
 
