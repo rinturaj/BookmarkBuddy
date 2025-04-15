@@ -19,6 +19,7 @@
 
   export let isSideBar = false;
   async function getCurrentTabDetails() {
+    isCollapsed = true;
     isLoading = false;
     currentTab = await getCurrenttab();
     currentPage.favicon = currentTab.favIconUrl || "";
@@ -27,6 +28,7 @@
     const v = await browser.storage.local.get(currentPage.url.toString());
     bookmarkDetails = v[currentPage.url.toString()];
     isBookmarked = !!bookmarkDetails ? true : false;
+    isCollapsed = false;
   }
   // Current page info (would come from Chrome API in real extension)
   let currentPage = {

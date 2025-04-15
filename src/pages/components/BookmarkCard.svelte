@@ -1,14 +1,20 @@
 <script lang="ts">
   import { ExternalLink, Trash2, Check } from "lucide-svelte";
-  import { fade, fly } from "svelte/transition";
-  import { quintOut } from "svelte/easing";
+  import { fly, scale, fade } from "svelte/transition";
+  import { quintInOut, quintOut } from "svelte/easing";
   import Button from "../../lib/components/ui/button/button.svelte";
   import { getFaviconFromUrl } from "../../script/bookmark.util";
   import Separator from "../../lib/components/ui/separator/separator.svelte";
+
+  // Custom transition combining fly, scale, and fade
+  import { crossfade } from "svelte/transition";
+  import type { TransitionConfig } from "svelte/transition";
+
   import browser from "webextension-polyfill";
   import { ACTION } from "../../const";
   import { trackEvent } from "../../script/analytics";
   import { searchResult } from "../../script/bookmarkStore";
+  import { flyScaleFade } from "../../script/animation";
 
   interface BookmarkDetails {
     id?: string;
@@ -60,8 +66,13 @@
 
 <div
   class="space-y-1"
-  in:fade={{ duration: 300 }}
-  out:fly={{ y: -20, duration: 300, easing: quintOut }}
+  in:flyScaleFade={{ delay: 250, duration: 350, easing: quintInOut }}
+  out:fly={{
+    x: -100,
+    duration: 400,
+    delay: 100,
+    easing: quintInOut,
+  }}
   class:deleting={isDeleting}
 >
   <div class="p-1 rounded-md relative overflow-hidden group">

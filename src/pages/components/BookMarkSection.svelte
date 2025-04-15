@@ -132,6 +132,10 @@
                     class="h-[24px]"
                     alt=""
                     srcset=""
+                    onerror={(event) => {
+                      const img = event.target as HTMLImageElement;
+                      if (img) img.src = "/default.png";
+                    }}
                   />
                   <div class="flex flex-col flex-grow min-w-0">
                     <span class="text-sm font-medium truncate flex-grow min-w-0"

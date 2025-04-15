@@ -1,4 +1,22 @@
 <script lang="ts">
+  import { quintInOut } from "svelte/easing";
+  import type { TransitionConfig } from "svelte/transition";
+
+  function flyFade(
+    node: Element,
+    { x = 40, duration = 300, easing = quintInOut } = {}
+  ): TransitionConfig {
+    return {
+      duration,
+      easing,
+      css: (t: number) => {
+        const opacity = t;
+        const translate = x * (1 - t);
+        return `opacity: ${opacity}; transform: translateX(${translate}px);`;
+      },
+    };
+  }
+
   import {
     Plus,
     Save,
@@ -30,8 +48,12 @@
   import { initAnalytics, trackPageView } from "../script/analytics";
 
   onMount(() => {
-    initAnalytics();
-    trackPageView("pupup");
+    try {
+      initAnalytics();
+      trackPageView("pupup");
+    } catch (error) {
+      console.error("Error tracking page view:", error);
+    }
   });
 
   let toggleView = false;
@@ -110,10 +132,20 @@
         : "p-3 pt-2"}
     >
       {#if !toggleView}
-        <AiAnalysis></AiAnalysis>
+        <div
+          in:flyFade={{ x: 40, duration: 300 }}
+          out:flyFade={{ x: -40, duration: 200 }}
+        >
+          <AiAnalysis />
+        </div>
       {:else}
-        <SearchSection></SearchSection>
-        <SearchResult></SearchResult>
+        <div
+          in:flyFade={{ x: 40, duration: 300 }}
+          out:flyFade={{ x: -40, duration: 200 }}
+        >
+          <SearchSection />
+          <SearchResult />
+        </div>
       {/if}
     </CardContent>
 

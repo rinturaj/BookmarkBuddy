@@ -94,8 +94,13 @@
     <div class="flex flex-col items-center justify-center p-6 text-center">
       <img
         src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png"
-        alt="No data found"
         class="w-12 h-12 mb-4 opacity-70"
+        alt=""
+        srcset=""
+        onerror={(event) => {
+          const img = event.target as HTMLImageElement;
+          if (img) img.src = "/default.png";
+        }}
       />
       <h1 class="text-sm font-semibold mb-2">
         {$searchstts}
@@ -156,7 +161,16 @@
     </div>
   {/if}
   {#each $saved as item, index}
-    <div class="mb-2">
+    <div
+      class="mb-2"
+      in:fly={{ x: 100, duration: 400, delay: index * 100, easing: quintInOut }}
+      out:fly={{
+        x: -100,
+        duration: 400,
+        delay: index * 100,
+        easing: quintInOut,
+      }}
+    >
       <Card class="p-0">
         <CardContent class="p-0">
           <button
@@ -169,6 +183,10 @@
                 class="h-[24px]"
                 alt=""
                 srcset=""
+                onerror={(event) => {
+                  const img = event.target as HTMLImageElement;
+                  if (img) img.src = "/default.png";
+                }}
               />
               <div class="flex flex-col flex-grow min-w-0">
                 <span class="text-sm font-medium truncate flex-grow min-w-0"
