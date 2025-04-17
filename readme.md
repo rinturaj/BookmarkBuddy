@@ -38,6 +38,38 @@ BookmarkBuddy is a powerful AI-based Chrome extension that helps you organize an
    - Results will appear instantly as you type
    - Search by context based query
 
+## Running the App Locally
+
+Before installing dependencies, make sure to copy the `.env` file to the root folder of the project. This file contains environment variables required for the app to run correctly.
+
+You can run, build, and test BookmarkBuddy locally using the following commands:
+
+### 1. Install Dependencies
+
+```
+pnpm install
+```
+
+### 2. Start the Development Server
+
+This will start Vite and allow hot-reloading for development:
+
+```
+pnpm run dev
+```
+
+### 3. Build for Production
+
+To generate the optimized extension files for production:
+
+```
+pnpm run build
+```
+
+The build output will be in the `dist` folder, which you can use to load the extension in Chrome as described in the Installation section.
+
+---
+
 ## Technical Architecture
 
 BookmarkBuddy leverages advanced AI to enhance bookmark management and search. Below is an overview of its architecture and data flow:
