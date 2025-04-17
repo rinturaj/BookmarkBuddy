@@ -4,7 +4,7 @@
   <img src="./public/icon/128.png" alt="BookmarkBuddy Icon" width="128" height="128">
 </div>
 
-BookmarkBuddy is a powerful Chrome extension that helps you organize and manage your bookmarks efficiently. With its intuitive interface and advanced search capabilities, you'll never lose track of your saved web pages again.
+BookmarkBuddy is a powerful AI-based Chrome extension that helps you organize and manage your bookmarks efficiently. Leveraging artificial intelligence, it offers an intuitive interface and advanced search capabilities, ensuring you'll never lose track of your saved web pages again.
 
 ## Installation
 
@@ -37,6 +37,69 @@ BookmarkBuddy is a powerful Chrome extension that helps you organize and manage 
    - Type your search query in the search bar
    - Results will appear instantly as you type
    - Search by context based query
+
+## Technical Architecture
+
+BookmarkBuddy leverages advanced AI to enhance bookmark management and search. Below is an overview of its architecture and data flow:
+
+### Architecture Flow Chart
+
+```
+User clicks 'Bookmark' on a webpage
+              |
+              v
+   ┌─────────────────────────────┐
+   │   Page Content Captured     │
+   └─────────────────────────────┘
+              |
+              v
+   ┌─────────────────────────────┐
+   │  Meta Llama-3-8B-Instruct  │
+   │  (AI Model Analysis)       │
+   └─────────────────────────────┘
+              |
+              v
+   ┌───────────────────────────────────────────────┐
+   │ Extracted Details:                            │
+   │ - Title                                       │
+   │ - Small Description                           │
+   │ - Useful Links                                │
+   │ - Category                                    │
+   │ - Similar Websites                            │
+   └───────────────────────────────────────────────┘
+              |
+              v
+   ┌───────────────────────────────────────────────┐
+   │ Universal Sentence Encoder (TensorFlow.js)    │
+   │ (Embeds extracted details into vectors)       │
+   └───────────────────────────────────────────────┘
+              |
+              v
+   ┌─────────────────────────────┐
+   │   Store Details & Embeddings│
+   └─────────────────────────────┘
+              |
+              v
+   ┌─────────────────────────────┐
+   │   Search & Retrieval        │
+   │   (Semantic, Contextual)    │
+   └─────────────────────────────┘
+```
+
+### How It Works
+
+1. **User Action**: When a user clicks to bookmark a page, the extension sends the page content to the AI pipeline.
+2. **AI Analysis (Meta Llama-3-8B-Instruct)**: The page content is analyzed using the meta/llama-3-8b-instruct pretrained model. This model extracts structured details such as:
+   - Title
+   - Small description
+   - Useful links
+   - Category
+   - Similar websites
+3. **Text Embedding (TensorFlow Universal Sentence Encoder)**: The extracted details are embedded into vector representations using the Universal Sentence Encoder (running offline via TensorFlow.js). These embeddings enable fast and context-aware search.
+4. **Data Storage**: Both the extracted details and their embeddings are stored separately for efficient retrieval and filtering.
+5. **Bookmark Search**: When searching, queries are embedded and matched against stored embeddings, enabling semantic and contextual search.
+
+This architecture ensures BookmarkBuddy delivers smart, AI-powered bookmark management and search, all running locally in your browser for privacy and speed.
 
 ## Support
 
