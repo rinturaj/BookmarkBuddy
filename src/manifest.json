@@ -4,7 +4,6 @@
   "{{firefox}}.manifest_version": 2,
   "permissions": [
     "activeTab",
-    "scripting",
     "storage",
     "tabs",
     "contextMenus",
@@ -12,7 +11,13 @@
     "history",
     "bookmarks"
   ],
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": [
+    "https://api.cloudflare.com/*",
+    "https://tfhub.dev/*",
+    "https://www.kaggle.com/*",
+    "https://storage.googleapis.com/*",
+    "https://www.googleapis.com/*"
+  ],
   "icons": {
     "16": "icon/16.png",
     "32": "icon/32.png",
@@ -21,13 +26,6 @@
     "128": "icon/128.png"
   },
   "omnibox": { "keyword": "bm" },
-  "content_scripts": [
-    {
-      "matches": ["https://*/*", "http://*/*"],
-      "js": ["src/content.ts"],
-      "all_frames": false
-    }
-  ],
   "side_panel": {
     "default_path": "src/sidepanel/sidepanel.html"
   },
@@ -41,11 +39,5 @@
     "{{chrome}}.service_worker": "src/background.ts",
     "{{firefox}}.scripts": ["src/background.ts"],
     "type": "module"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["options/index.html"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  }
 }
