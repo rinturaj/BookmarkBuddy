@@ -3,6 +3,7 @@ import { ACTION } from "./const";
 import textEmbedder from "./script/textEmbedder";
 import { callAiapi } from "./script/ai";
 import { bookmarkUrl, getFaviconFromUrl } from "./script/bookmark.util";
+import { BookmarkManager } from "./script/bookmark";
 console.log("Background script loaded!");
 
 textEmbedder.initialize({
@@ -11,51 +12,48 @@ textEmbedder.initialize({
   },
 });
 
+new BookmarkManager();
+
 browser.runtime.onMessage.addListener(async (message, sender) => {
   console.log("Message received:", message, sender);
 
   if (message.action === ACTION.BOOKMARK_URL) {
-    const currentPage = message.data;
-    let bookmarkDetails = await callAiapi(currentPage);
-
-    const jsonMatch = bookmarkDetails?.result?.response.match(/{[\s\S]*}/);
-    if (jsonMatch) {
-      const jsonString = jsonMatch[0];
-      const jsonObject = JSON.parse(jsonString);
-      bookmarkDetails = jsonObject;
-
-      const book = await bookmarkUrl(
-        currentPage.url,
-        bookmarkDetails.title,
-        bookmarkDetails.category
-      );
-
-      bookmarkDetails = {
-        ...bookmarkDetails,
-        ...book,
-      };
-
-      // Generate embedding for the bookmark
-      try {
-        const query = `title: ${bookmarkDetails.title} , category: ${
-          bookmarkDetails.details
-        } , category: ${bookmarkDetails.category} , url: ${
-          bookmarkDetails.url
-        } , createdAt: ${new Date(bookmarkDetails.dateAdded).toISOString()}`;
-        bookmarkDetails.embedding = await textEmbedder.embedText(query);
-      } catch (error) {
-        console.error("Error generating embedding:", error);
-      }
-
-      // Store the bookmark
-      let value = { [bookmarkDetails.url]: bookmarkDetails };
-      await browser.storage.local.set(value);
-      browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
-      browser.runtime.sendMessage({ action: ACTION.UPDATE_VECTORS });
-      return Promise.resolve({ success: true, bookmarkDetails });
-    } else {
-      return Promise.resolve({ success: false, bookmarkDetails });
-    }
+    // const currentPage = message.data;
+    // let bookmarkDetails = await callAiapi(currentPage);
+    // const jsonMatch = bookmarkDetails?.result?.response.match(/{[\s\S]*}/);
+    // if (jsonMatch) {
+    //   const jsonString = jsonMatch[0];
+    //   const jsonObject = JSON.parse(jsonString);
+    //   bookmarkDetails = jsonObject;
+    //   const book = await bookmarkUrl(
+    //     currentPage.url,
+    //     bookmarkDetails.title,
+    //     bookmarkDetails.category
+    //   );
+    //   bookmarkDetails = {
+    //     ...bookmarkDetails,
+    //     ...book,
+    //   };
+    //   // Generate embedding for the bookmark
+    //   try {
+    //     const query = `title: ${bookmarkDetails.title} , category: ${
+    //       bookmarkDetails.details
+    //     } , category: ${bookmarkDetails.category} , url: ${
+    //       bookmarkDetails.url
+    //     } , createdAt: ${new Date(bookmarkDetails.dateAdded).toISOString()}`;
+    //     bookmarkDetails.embedding = await textEmbedder.embedText(query);
+    //   } catch (error) {
+    //     console.error("Error generating embedding:", error);
+    //   }
+    //   // Store the bookmark
+    //   let value = { [bookmarkDetails.url]: bookmarkDetails };
+    //   await browser.storage.local.set(value);
+    //   browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
+    //   browser.runtime.sendMessage({ action: ACTION.UPDATE_VECTORS });
+    //   return Promise.resolve({ success: true, bookmarkDetails });
+    // } else {
+    //   return Promise.resolve({ success: false, bookmarkDetails });
+    // }
   }
 
   if (message.action === ACTION.BOOKMARK_UPDATE) {

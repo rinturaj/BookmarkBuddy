@@ -105,13 +105,16 @@ export async function bookmarkUrl(url: string, title: any, category: string) {
 
 // Function to find or create a folder
 export async function getOrCreateFolder(
-  title: any,
+  title: string,
   parentId: string | undefined
 ) {
-  let results = await Browser.bookmarks.search({ title });
-  let folder = results.find((b) => !b.url && b.parentId === parentId);
-  if (folder) return folder; // Folder exists
+  // Get all children of the parent folder
+  if (!parentId) parentId = "1"; // fallback to Bookmarks Bar
+  const children = await Browser.bookmarks.getChildren(parentId);
+  const folder = children.find(child => !child.url && child.title === title);
+  if (folder) return folder; // Folder exists under parent
 
+  // Only create if not found under parent
   return Browser.bookmarks.create({ parentId, title });
 }
 

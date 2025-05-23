@@ -1,11 +1,15 @@
-import Browser, { tabs } from "webextension-polyfill";
+import Browser from "webextension-polyfill";
 import { ACTION } from "./const";
+import { mount } from "svelte";
+import Overlay from "./overlay/Overlay.svelte";
+import "tailwindcss/tailwind.css";
 
 console.log("Content script loaded!");
+mount(Overlay, { target: document.body });
 
 Browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  console.log("Message received in content script:", message);
   capturePageData();
+
   if (message.action === ACTION.OPEN_SIDEPANEL) {
     await chrome.sidePanel.open({ tabId: message?.id || 0 });
   }

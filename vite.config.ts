@@ -17,6 +17,7 @@ function generateManifest() {
 // https://vitejs.dev/config/
 export default defineConfig({
   assetsInclude: "static",
+
   resolve: {
     alias: {
       $lib: path.resolve("./src/lib"),

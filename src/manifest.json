@@ -9,7 +9,8 @@
     "contextMenus",
     "sidePanel",
     "history",
-    "bookmarks"
+    "bookmarks",
+    "scripting"
   ],
   "host_permissions": [
     "https://api.cloudflare.com/*",
@@ -39,5 +40,12 @@
     "{{chrome}}.service_worker": "src/background.ts",
     "{{firefox}}.scripts": ["src/background.ts"],
     "type": "module"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.ts"],
+      "css": ["src/app.css"]
+    }
+  ]
 }
