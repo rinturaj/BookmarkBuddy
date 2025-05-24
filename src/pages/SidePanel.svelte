@@ -1,7 +1,5 @@
 <script lang="ts">
   let showAiAnalysis = true;
-  import { Separator } from "$lib/components/ui/separator";
-  import { flip } from "svelte/animate";
   import { ModeWatcher } from "mode-watcher";
   import ActiveTabs from "./components/ActiveTabs.svelte";
   import SuggestionsSection from "./components/SuggestionsSection.svelte";
@@ -14,7 +12,6 @@
   import { ACTION } from "../const";
   import { onMount } from "svelte";
   import { initAnalytics, trackPageView } from "../script/analytics";
-  import { quintInOut } from "svelte/easing";
 
   onMount(() => {
     try {
@@ -44,16 +41,28 @@
       viewBox="0 0 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style="transition: transform 0.3s; transform: rotate({showAiAnalysis ? 90 : 0}deg);"
+      style="transition: transform 0.3s; transform: rotate({showAiAnalysis
+        ? 90
+        : 0}deg);"
     >
-      <path d="M6 8L10 12L14 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path
+        d="M6 8L10 12L14 8"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
     </svg>
-    {showAiAnalysis ? 'Hide AI Analysis' : 'Show AI Analysis'}
+    {showAiAnalysis ? "Hide AI Analysis" : "Show AI Analysis"}
   </button>
   <div
     id="ai-analysis-section"
     class="ai-analysis-wrapper"
-    style="max-height: {showAiAnalysis ? '1000px' : '0'}; padding-top: {showAiAnalysis ? '0.5rem' : '0'}; padding-bottom: {showAiAnalysis ? '0.5rem' : '0'};"
+    style="max-height: {showAiAnalysis
+      ? '1000px'
+      : '0'}; padding-top: {showAiAnalysis
+      ? '0.5rem'
+      : '0'}; padding-bottom: {showAiAnalysis ? '0.5rem' : '0'};"
     aria-hidden={!showAiAnalysis}
   >
     {#if showAiAnalysis}

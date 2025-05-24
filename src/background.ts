@@ -4,12 +4,14 @@ import textEmbedder from "./script/textEmbedder";
 import { callAiapi } from "./script/ai";
 import { bookmarkUrl, getFaviconFromUrl } from "./script/bookmark.util";
 import { BookmarkManager } from "./script/bookmark";
+import OmniboxBookmarkSearch from "./script/omnibox";
 
 textEmbedder.initialize({
   onProgress: (progress: any) => {},
 });
 
 new BookmarkManager();
+new OmniboxBookmarkSearch();
 
 browser.runtime.onMessage.addListener(async (message, sender) => {
   if (message.action === ACTION.BOOKMARK_URL) {
@@ -114,31 +116,31 @@ browser.tabs.onActivated.addListener(() => {
   browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
 });
 
-chrome.omnibox.onInputEntered.addListener(async (text, sugges) => {
-  if (text === "open") {
-    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+// chrome.omnibox.onInputEntered.addListener(async (text, sugges) => {
+//   if (text === "open") {
+//     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-    if (tab) {
-      await chrome.sidePanel.open({ tabId: tab?.id || 0 });
-      return;
-    }
-  }
-  let url = text.startsWith("http") ? text : `https://${text}`;
-  chrome.bookmarks.create({ title: "Quick Bookmark", url });
-});
+//     if (tab) {
+//       await chrome.sidePanel.open({ tabId: tab?.id || 0 });
+//       return;
+//     }
+//   }
+//   let url = text.startsWith("http") ? text : `https://${text}`;
+//   chrome.bookmarks.create({ title: "Quick Bookmark", url });
+// });
 
-chrome.omnibox.onInputChanged.addListener(async (text, suggest) => {
-  // Get recent bookmarks
-  const recentBookmarks = await chrome.bookmarks.search(text);
+// chrome.omnibox.onInputChanged.addListener(async (text, suggest) => {
+//   // Get recent bookmarks
+//   const recentBookmarks = await chrome.bookmarks.search(text);
 
-  // Format suggestions
-  const suggestions = recentBookmarks
-    .filter((bookmark) => bookmark.url) // Filter out bookmarks without URLs
-    .map((bookmark) => ({
-      content: bookmark.url || "", // Ensure content is always a string
-      description: `${bookmark.title}`,
-      // icon: getFaviconFromUrl(bookmark.url || ""), // Use a default icon if URL is not available
-    }));
+//   // Format suggestions
+//   const suggestions = recentBookmarks
+//     .filter((bookmark) => bookmark.url) // Filter out bookmarks without URLs
+//     .map((bookmark) => ({
+//       content: bookmark.url || "", // Ensure content is always a string
+//       description: `${bookmark.title}`,
+//       // icon: getFaviconFromUrl(bookmark.url || ""), // Use a default icon if URL is not available
+//     }));
 
-  suggest(suggestions);
-});
+//   suggest(suggestions);
+// });
