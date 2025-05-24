@@ -52,7 +52,6 @@ searchWorker.onerror = (error) => {
 
 Browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === ACTION.UPDATE_VECTORS) {
-    console.log("Update vectors action received");
     await loadBookmarks();
   }
 });
@@ -60,9 +59,7 @@ Browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 export async function loadBookmarks() {
   if (!textEmbedder.isLoaded) {
     await textEmbedder.initialize({
-      onProgress: (progress: any) => {
-        console.log(`Model loading progress: ${progress.progress * 100}%`);
-      },
+      onProgress: (progress: any) => {},
     });
   }
   const urlKeys = await getAllUrlKeys();

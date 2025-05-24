@@ -60,7 +60,7 @@
 
   async function getCurrentTabDetails() {
     currentTab = await getCurrenttab();
-    console.log(currentTab);
+
     currentPage.favicon = currentTab.favIconUrl || "";
     currentPage.url = currentTab.url || "";
     currentPage.title = currentTab.title || "";
@@ -81,9 +81,9 @@
     Browser.runtime.onMessage.addListener(async (message) => {
       if (message.action === ACTION.CAPTURE_CONTENT) {
         currentPage = message;
-        console.log(message);
+
         currentTab = await getCurrenttab();
-        console.log(currentTab);
+
         currentPage.favicon = currentTab.favIconUrl || "";
       }
       if (message.action === ACTION.UPDATE_TABS) {

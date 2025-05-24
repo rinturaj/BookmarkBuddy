@@ -68,8 +68,6 @@ export async function getCategory(): Promise<{
   let children = await Browser.bookmarks.getChildren(bookmarkBuddy?.id || "");
   let folders = children.filter((item) => !!item);
 
-  console.log(folders);
-
   if (folders.length <= 0) {
     await createDefaultCategories(bookmarkBuddy?.id);
     children = await Browser.bookmarks.getChildren(bookmarkBuddy?.id || "");
@@ -111,7 +109,7 @@ export async function getOrCreateFolder(
   // Get all children of the parent folder
   if (!parentId) parentId = "1"; // fallback to Bookmarks Bar
   const children = await Browser.bookmarks.getChildren(parentId);
-  const folder = children.find(child => !child.url && child.title === title);
+  const folder = children.find((child) => !child.url && child.title === title);
   if (folder) return folder; // Folder exists under parent
 
   // Only create if not found under parent

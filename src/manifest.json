@@ -1,4 +1,6 @@
 {
+  "name": "Bookmark Buddy",
+  "description": "Let AI organize and analyze your web bookmarks",
   "manifest_version": 3,
   "{{chrome}}.manifest_version": 3,
   "{{firefox}}.manifest_version": 2,

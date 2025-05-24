@@ -24,7 +24,6 @@ class TextEmbedder {
 
       await tf.ready();
       const backendName = tf.getBackend() || "cpu";
-      console.log(`Using TensorFlow.js backend: ${backendName}`);
 
       if (onProgress) onProgress({ status: "loading", progress: 0.3 });
 
@@ -36,7 +35,6 @@ class TextEmbedder {
       this.isLoaded = true;
       this.useCache = useCache;
 
-      console.log("Text embedding model loaded successfully");
       return this.model;
     } catch (error) {
       this.isLoading = false;

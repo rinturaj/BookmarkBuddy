@@ -43,13 +43,11 @@
     await getCurrentTabDetails();
     browser.runtime.onMessage.addListener(
       async (message, sender, sendResponse) => {
-        console.log("AI Messages");
-
         if (message.action === ACTION.CAPTURE_CONTENT) {
           currentPage = message;
-          console.log(message);
+
           currentTab = await getCurrenttab();
-          console.log(currentTab);
+
           currentPage.favicon = currentTab.favIconUrl || "";
         }
         if (message.action === ACTION.UPDATE_TABS) {
@@ -131,7 +129,6 @@
     isCollapsed = true;
   }
   function onConfirm() {
-    console.log("Book marked");
     handleBookmark();
   }
   // Start pulse animation after component mounts

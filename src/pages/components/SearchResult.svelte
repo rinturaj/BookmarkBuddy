@@ -25,7 +25,6 @@
   $: activeC = activeCategory;
 
   async function toggleExpand(v: any, index: number) {
-    console.log("toggle");
     // Get the current value of the store
     const currentItems = $saved;
 

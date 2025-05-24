@@ -4,19 +4,14 @@ import textEmbedder from "./script/textEmbedder";
 import { callAiapi } from "./script/ai";
 import { bookmarkUrl, getFaviconFromUrl } from "./script/bookmark.util";
 import { BookmarkManager } from "./script/bookmark";
-console.log("Background script loaded!");
 
 textEmbedder.initialize({
-  onProgress: (progress: any) => {
-    console.log(`Model loading progress: ${progress.progress * 100}%`);
-  },
+  onProgress: (progress: any) => {},
 });
 
 new BookmarkManager();
 
 browser.runtime.onMessage.addListener(async (message, sender) => {
-  console.log("Message received:", message, sender);
-
   if (message.action === ACTION.BOOKMARK_URL) {
     // const currentPage = message.data;
     // let bookmarkDetails = await callAiapi(currentPage);

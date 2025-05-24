@@ -18,9 +18,7 @@
   let activeTabs: Tab[] = [];
 
   // Save current tab as bookmark
-  function saveCurrentTab() {
-    console.log("Save current tab");
-  }
+  function saveCurrentTab() {}
   async function fetchTabs() {
     const queriedTabs = await Browser.tabs.query({});
     if (!queriedTabs) return;
@@ -45,8 +43,6 @@
   });
 
   function closeTab(id: number | undefined) {
-    console.log(id);
-
     if (!id) return;
     chrome.tabs.remove(id);
   }
@@ -82,8 +78,6 @@
                 size="icon"
                 class="h-8 w-8 text-red-400"
                 onclick={() => {
-                  console.log("Test");
-
                   closeTab(tab?.id);
                 }}
               >

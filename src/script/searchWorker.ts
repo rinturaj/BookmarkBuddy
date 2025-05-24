@@ -49,8 +49,6 @@ self.onmessage = async (e) => {
     } else {
       const q = handleEnhancedSearch(query);
 
-      console.log(q);
-
       // Generate query embedding
       const queryEmbedding = await textEmbedder.embedText(query);
 

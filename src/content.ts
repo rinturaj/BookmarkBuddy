@@ -4,7 +4,6 @@ import { mount } from "svelte";
 import Overlay from "./overlay/Overlay.svelte";
 import "tailwindcss/tailwind.css";
 
-console.log("Content script loaded!");
 mount(Overlay, { target: document.body });
 
 Browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {

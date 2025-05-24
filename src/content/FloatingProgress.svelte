@@ -1,95 +1,115 @@
 <script lang="ts">
   import Browser from "webextension-polyfill";
-  import Alert from "../lib/components/ui/alert/alert.svelte";
+  import { BookmarkCheck, TerminalIcon } from "lucide-svelte";
+  import { Progress } from "$lib/components/ui/progress/index.js";
+  import * as Card from "$lib/components/ui/card/index.js";
+  import { flyScaleFade } from "../script/animation";
+  import { fly } from "svelte/transition";
+  import { quintInOut } from "svelte/easing";
 
-  export let progressValue = 0;
-  export let show = false;
-  export let success = false;
-  $: barStyle = `width: ${progressValue}%;`;
+  import { onMount } from "svelte";
+  import BookmarkCard from "../pages/components/BookmarkCard.svelte";
+  let floatingProgressList: any[] = [];
+  let currentUrl = window.location.href;
 
-  Browser.runtime.onMessage.addListener(
-    async (message, sender, sendResponse) => {
-      const { type, progress } = message;
+  function filterForCurrentPage(list: any[]) {
+    // Only show progress cards for this page's URL
+    return list.filter((item) => item.url === currentUrl);
+    // To show all active bookmarks globally, return list;
+  }
 
-      if (type === "progress") {
-        show = true;
-        progressValue = progress;
-        console.log("Progress:", progress);
-        success = false;
-      } else if (type === "done") {
-        show = false;
-        success = true;
-        setTimeout(() => {
-          success = false;
-        }, 2000);
-      } else if (type === "hide") {
-        show = false;
-        success = false;
+  async function loadFloatingProgressList() {
+    const { list = [] } = await Browser.storage.local.get(
+      "floatingProgressList"
+    );
+
+    floatingProgressList = filterForCurrentPage(
+      Array.isArray(list) ? list : []
+    );
+  }
+
+  onMount(async () => {
+    await loadFloatingProgressList();
+    // Listen for storage changes to update in real time
+    Browser.storage.onChanged.addListener(async (changes, area) => {
+      if (area === "local" && changes.floatingProgressList) {
+        floatingProgressList = filterForCurrentPage(
+          changes.floatingProgressList.newValue ?? []
+        );
       }
-    }
-  );
+    });
+  });
 </script>
 
-{#if show}
-  <Alert>
-    <div class="floating-progress-bar">
-      <div class="progress-inner" style={barStyle}></div>
-    </div>
-  </Alert>
-{/if}
-
-{#if success}
-  <div class="floating-success">
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#fff"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg
+{#each floatingProgressList as entry (entry.url)}
+  <div class="floating-progress-bar">
+    <div
+      class="m-2 p-3"
+      in:flyScaleFade={{ delay: 250, duration: 350, easing: quintInOut }}
+      out:fly={{
+        x: -200,
+        duration: 200,
+        delay: 100,
+        easing: quintInOut,
+      }}
     >
-    <span>Bookmark Saved!</span>
+      <Card.Root class="bord shadow-lg max-w-sm ">
+        <Card.Header>
+          {#if entry.status === "error"}
+            <Card.Title
+              class="text-sm font-extrabold font-sans text-red-600 flex items-center gap-2"
+            >
+              <TerminalIcon size={18} /> Bookmark Removed
+            </Card.Title>
+            <Card.Description class="text-sm max-w-xs">
+              The bookmark was deleted before AI could finish. Bookmarking
+              aborted.
+            </Card.Description>
+          {:else if entry.status === "done"}
+            <Card.Title
+              class="text-sm font-extrabold font-sans text-green-600 flex items-center gap-2"
+            >
+              <BookmarkCheck size={18} /> Bookmark Saved!
+            </Card.Title>
+            <Card.Description class="text-sm">
+              Your page was successfully organized by AI. 🎉
+            </Card.Description>
+          {:else}
+            <Card.Title class="text-sm font-extrabold font-sans">
+              🚀 Bookmarking in Progress!
+            </Card.Title>
+            <Card.Description class="text-sm max-w-xs">
+              Our AI is working its magic ✨ to save your page. Sit tight, this
+              will be quick! ⏳
+            </Card.Description>
+          {/if}
+        </Card.Header>
+        <Card.Content>
+          {#if entry.status === "error"}
+            <div class="text-red-500 text-xs mt-2">AI bookmarking aborted.</div>
+          {:else if entry.status === "done"}
+            <div class="max-w-xs">
+              <BookmarkCard bookmarkDetails={entry.bookmarkDetails} />
+            </div>
+          {:else}
+            <Progress value={entry.progressValue} max={100} />
+          {/if}
+        </Card.Content>
+      </Card.Root>
+    </div>
   </div>
-{/if}
+{/each}
 
 <style>
   .floating-progress-bar {
     position: fixed;
     top: 24px;
     right: 24px;
-    width: 240px;
-    height: 18px;
-    background: rgba(0, 0, 0, 0.15);
-    border-radius: 9px;
+    /* width: 240px; */
+    min-width: 240px;
+    /* height: 18px; */
+    /* background: rgba(0, 0, 0, 0.15); */
     z-index: 2147483647;
     overflow: hidden;
-  }
-  .progress-inner {
-    height: 100%;
-    background: #4f46e5;
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .floating-success {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 2147483647;
-    background: rgba(76, 175, 80, 0.95);
-    color: #fff;
-    font-size: 16px;
-    padding: 12px 28px;
-    border-radius: 20px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    animation: fadeOut 2s 1.7s forwards;
-  }
-  @keyframes fadeOut {
-    to {
-      opacity: 0;
-    }
   }
 </style>
