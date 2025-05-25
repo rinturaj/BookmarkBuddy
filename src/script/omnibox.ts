@@ -4,13 +4,12 @@
 // "omnibox": { "keyword": "bb" }
 // and permissions: ["bookmarks", "omnibox", "tabs", "notifications"]
 
-import { getFaviconFromUrl } from "./bookmark.util";
-
 class OmniboxBookmarkSearch {
   constructor() {
     chrome.omnibox.onInputChanged.addListener(
       this.handleInputChanged.bind(this)
     );
+
     // chrome.omnibox.onInputEntered.addListener(
     //   this.handleInputEntered.bind(this)
     // );
