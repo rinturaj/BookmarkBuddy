@@ -15,7 +15,7 @@
   } from "../../script/bookmarkStore";
   import { Button } from "$lib/components/ui/button";
   import { trackEvent } from "../../script/analytics";
-  import Spinner from "../../components/Spinner.svelte";
+  import Spinner from "../../components/util/Spinner.svelte";
   import { fly } from "svelte/transition";
   import { quintInOut } from "svelte/easing";
   import Separator from "../../lib/components/ui/separator/separator.svelte";

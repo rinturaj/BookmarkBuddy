@@ -29,14 +29,24 @@
     "128": "icon/128.png"
   },
   "omnibox": { "keyword": "bm" },
+  "options_page": "src/views/page/page.html",
+  "url_overrides": {
+    "newtab": "src/views/page/page.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["src/views/page/page.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "side_panel": {
-    "default_path": "src/sidepanel/sidepanel.html"
+    "default_path": "src/views/sidepanel/sidepanel.html"
   },
   "{{chrome}}.action": {
-    "default_popup": "src/popup/popup.html"
+    "default_popup": "src/views/popup/popup.html"
   },
   "{{firefox}}.browser_action": {
-    "default_popup": "src/popup/popup.html"
+    "default_popup": "src/views/popup/popup.html"
   },
   "background": {
     "{{chrome}}.service_worker": "src/background.ts",

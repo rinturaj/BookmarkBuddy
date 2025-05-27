@@ -3,12 +3,12 @@
   import { BookmarkCheck, TerminalIcon } from "lucide-svelte";
   import { Progress } from "$lib/components/ui/progress/index.js";
   import * as Card from "$lib/components/ui/card/index.js";
-  import { flyScaleFade } from "../script/animation";
   import { fly } from "svelte/transition";
   import { quintInOut } from "svelte/easing";
 
   import { onMount } from "svelte";
-  import BookmarkCard from "../pages/components/BookmarkCard.svelte";
+  import { flyScaleFade } from "../../script/animation";
+  import BookmarkCard from "../common/BookmarkCard.svelte";
   let floatingProgressList: any[] = [];
   let currentUrl = window.location.href;
 

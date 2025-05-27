@@ -1,13 +1,13 @@
 <script lang="ts">
   let showAiAnalysis = true;
   import { ModeWatcher } from "mode-watcher";
-  import ActiveTabs from "./components/ActiveTabs.svelte";
-  import SuggestionsSection from "./components/SuggestionsSection.svelte";
-  import BookMarkSection from "./components/BookMarkSection.svelte";
+  import ActiveTabs from "../components/common/ActiveTabs.svelte";
+  import SuggestionsSection from "../components/common/SuggestionsSection.svelte";
+  import BookMarkSection from "../components/common/BookMarkSection.svelte";
   import * as Tabs from "$lib/components/ui/tabs";
-  import Header from "./components/Header.svelte";
-  import SearchSection from "./components/SearchSection.svelte";
-  import AiAnalysis from "./components/AiAnalysis.svelte";
+  import Header from "../components/common/Header.svelte";
+  import AiAnalysis from "../components/common/AiAnalysis.svelte";
+  import SearchSection from "../components/common/SearchSection.svelte";
   import Browser from "webextension-polyfill";
   import { ACTION } from "../const";
   import { onMount } from "svelte";

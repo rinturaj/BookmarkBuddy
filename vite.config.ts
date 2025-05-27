@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import webExtension, { readJsonFile } from "vite-plugin-web-extension";
-import path from "path";
+import path, { resolve } from "path";
 
 function generateManifest() {
   const manifest = readJsonFile("src/manifest.json");
@@ -17,7 +17,15 @@ function generateManifest() {
 // https://vitejs.dev/config/
 export default defineConfig({
   assetsInclude: "static",
-
+  build: {
+    rollupOptions: {
+      input: {
+        page: resolve(__dirname, "src/views/page/page.html"),
+      },
+    },
+    outDir: "dist",
+    emptyOutDir: true,
+  },
   resolve: {
     alias: {
       $lib: path.resolve("./src/lib"),

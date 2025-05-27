@@ -18,6 +18,7 @@
   }
 
   import {
+    Fullscreen,
     Plus,
     Save,
     Search,
@@ -38,13 +39,13 @@
     CardHeader,
     CardTitle,
   } from "$lib/components/ui/card";
-  import AiAnalysis from "./components/AiAnalysis.svelte";
+  import AiAnalysis from "../components/common/AiAnalysis.svelte";
   import { onMount } from "svelte";
   import Browser from "webextension-polyfill";
   import { ACTION } from "../const";
   import { getCurrenttab } from "../script/bookmark.util";
-  import SearchSection from "./components/SearchSection.svelte";
-  import SearchResult from "./components/SearchResult.svelte";
+  import SearchSection from "../components/common/SearchSection.svelte";
+  import SearchResult from "../components/common/SearchResult.svelte";
   import { initAnalytics, trackPageView } from "../script/analytics";
 
   onMount(() => {
@@ -150,6 +151,19 @@
     </CardContent>
 
     <CardFooter class="flex justify-between pt-0">
+      <Button
+        onclick={() => {
+          chrome.tabs.create({
+            url: chrome.runtime.getURL("src/views/page/page.html"),
+          });
+        }}
+        variant="ghost"
+        size="sm"
+        class="hover:bg-primary/10 transition-colors duration-200"
+      >
+        <Fullscreen class="h-3.5 w-3.5 mr-1" />
+        More
+      </Button>
       <Button
         onclick={() => (toggleView = !toggleView)}
         variant="ghost"
