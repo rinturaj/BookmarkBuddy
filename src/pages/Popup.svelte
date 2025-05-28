@@ -161,7 +161,7 @@
         size="sm"
         class="hover:bg-primary/10 transition-colors duration-200"
       >
-        <Fullscreen class="h-3.5 w-3.5 mr-1" />
+        <Fullscreen class="h-3.5  mr-1" />
         More
       </Button>
       <Button
@@ -170,8 +170,8 @@
         size="sm"
         class="hover:bg-primary/10 transition-colors duration-200"
       >
-        <Search class="h-3.5 w-3.5 mr-1" />
-        Search Bookmark
+        <Search class="h-3.5  mr-1" />
+        Search
       </Button>
       <Button
         onclick={async () => {
@@ -190,10 +190,20 @@
         size="sm"
         class="hover:bg-primary/10 transition-colors duration-200"
       >
-        <Sidebar class="h-3.5 w-3.5 mr-1" />
+        <Sidebar class="h-3.5  mr-1" />
         Sidepanel
       </Button>
     </CardFooter>
+    <a
+      class="text-center my-1 flex items-center justify-center"
+      href="https://www.buymeacoffee.com/rin2"
+      target="_blank"
+      ><img
+        src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+        alt="Buy Me A Coffee"
+        style="height: 30px !important;width: 100px !important;"
+      />
+    </a>
   </Card>
 </div>
 

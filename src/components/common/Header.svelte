@@ -18,14 +18,24 @@
         <img src={iconLogo} alt="" class="p-2 rounded-2xl" srcset="" />
       </AvatarFallback>
     </Avatar>
-    <h3 class="text-xl text-primary font-bold">BookmarkBuddy</h3>
+
+    <h5 class="text-xl text-primary font-bold">BookmarkBuddy</h5>
   </div>
-  <Button variant="ghost" size="icon" onclick={() => toggleMode()}>
-    <Sun
-      class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
-    />
-    <Moon
-      class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
-    />
-  </Button>
+  <div class="flex items-center gap-2">
+    <a href="https://www.buymeacoffee.com/rin2" target="_blank"
+      ><img
+        src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+        alt="Buy Me A Coffee"
+        style="height: 30px !important;width: 80px !important;"
+      />
+    </a>
+    <Button variant="ghost" size="icon" onclick={() => toggleMode()}>
+      <Sun
+        class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+      />
+      <Moon
+        class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
+      />
+    </Button>
+  </div>
 </div>

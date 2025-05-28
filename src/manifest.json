@@ -30,9 +30,6 @@
   },
   "omnibox": { "keyword": "bm" },
   "options_page": "src/views/page/page.html",
-  "url_overrides": {
-    "newtab": "src/views/page/page.html"
-  },
   "web_accessible_resources": [
     {
       "resources": ["src/views/page/page.html"],

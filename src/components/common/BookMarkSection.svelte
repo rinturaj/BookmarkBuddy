@@ -1,4 +1,6 @@
 <script lang="ts">
+  import recentlyBookmarked from "./RecentlyBookmarked.svelte";
+
   import SearchResult from "./SearchResult.svelte";
 
   import { Bookmark, PlusIcon, Check, List, ExternalLink } from "lucide-svelte";
@@ -26,6 +28,7 @@
   import { get } from "svelte/store";
   import { flyScaleFade } from "../../script/animation";
   import { quintInOut } from "svelte/easing";
+  import RecentlyBookmarked from "./RecentlyBookmarked.svelte";
 
   let viewInput = false;
   let parentFolderId = "";
@@ -122,53 +125,6 @@
 
   <!-- Saved -->
   <SearchResult></SearchResult>
-  {#if recents.length > 0}
-    <Separator></Separator>
-
-    <div class="px-2 mb-2">
-      <h4 class="text-lg font-semibold mb-2">Recently Saved Bookmark</h4>
-
-      {#each recents as item, index}
-        <div class="mb-2">
-          <Card class="p-0">
-            <CardContent class="p-0">
-              <a
-                href={item?.url}
-                target="_blank"
-                class="w-full hover:bg-muted cursor-pointer rounded-lg flex items-center justify-between p-2 flex-grow min-w-0 text-left"
-              >
-                <div class="flex items-center gap-2 flex-grow min-w-0">
-                  <img
-                    src={getFaviconFromUrl(item?.url)}
-                    class="h-[24px]"
-                    alt=""
-                    srcset=""
-                    onerror={(event) => {
-                      const img = event.target as HTMLImageElement;
-                      if (img) img.src = "/default.png";
-                    }}
-                  />
-                  <div class="flex flex-col flex-grow min-w-0">
-                    <span class="text-sm font-medium truncate flex-grow min-w-0"
-                      >{item?.title || item?.url}</span
-                    >
-                    <span
-                      class="text-xs truncate max-w-[250px] text-muted-foreground"
-                    >
-                      {item?.url}</span
-                    >
-                  </div>
-                </div>
-                <ExternalLink
-                  class="w-5 h-5 flex-shrink-0 text-muted-foreground"
-                />
-              </a>
-            </CardContent>
-          </Card>
-        </div>
-      {/each}
-    </div>
-  {/if}
 </div>
 
 <Dialog.Root open={viewInput} onOpenChange={(x) => (viewInput = x)}>

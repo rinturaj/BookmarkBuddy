@@ -12,6 +12,7 @@
   import { ACTION } from "../const";
   import { onMount } from "svelte";
   import { initAnalytics, trackPageView } from "../script/analytics";
+  import RecentlyBookmarked from "../components/common/RecentlyBookmarked.svelte";
 
   onMount(() => {
     try {
@@ -91,6 +92,7 @@
         <SearchSection></SearchSection>
 
         <BookMarkSection></BookMarkSection>
+        <RecentlyBookmarked></RecentlyBookmarked>
       </Tabs.Content>
     </Tabs.Root>
   </div>
