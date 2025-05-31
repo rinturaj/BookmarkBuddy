@@ -14,7 +14,6 @@
   <Header></Header>
 </div>
 
->
 <div class="container flex w-full h-full">
   <!-- Left section -->
   <div class="flex-1 p-4 border-r border-gray-200">

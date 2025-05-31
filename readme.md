@@ -1,7 +1,7 @@
 # BookmarkBuddy - Chrome Extension
 
 <div align="center">
-  <img src="./public/icon/128.png" alt="BookmarkBuddy Icon" width="128" height="128">
+  <img src="./public/icon/icon_transperent.png" alt="BookmarkBuddy Icon" width="128" height="128">
 </div>
 
 BookmarkBuddy is a powerful AI-based Chrome extension that helps you organize and manage your bookmarks efficiently. Leveraging artificial intelligence, it offers an intuitive interface and advanced search capabilities, ensuring you'll never lose track of your saved web pages again.
