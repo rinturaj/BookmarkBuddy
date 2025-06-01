@@ -10,6 +10,7 @@
     activeCategory,
     isSearching,
     modelProgress,
+    searchBookmarks,
     searchResult,
     searchStatus,
   } from "../../script/bookmarkStore";
@@ -142,17 +143,25 @@
       <div class="space-y-2 w-full max-w-md">
         <p class="text-xs text-muted-foreground">Try searching for:</p>
         <div class="flex flex-wrap gap-2 justify-center">
-          <span class="text-xs px-2 py-1 bg-muted rounded-full"
-            >"React tutorials from last month"</span
+          <button
+            onclick={() => searchBookmarks("React tutorials from last month")}
+            class="text-xs px-2 py-1 bg-muted rounded-full cursor-pointer"
+            >"React tutorials from last month"</button
           >
-          <span class="text-xs px-2 py-1 bg-muted rounded-full"
-            >"AI research papers"</span
+          <button
+            onclick={() => searchBookmarks("AI research papers")}
+            class="text-xs px-2 py-1 bg-muted rounded-full cursor-pointer"
+            >"AI research papers"</button
           >
-          <span class="text-xs px-2 py-1 bg-muted rounded-full"
-            >"Design inspiration websites"</span
+          <button
+            onclick={() => searchBookmarks("Design inspiration websites")}
+            class="text-xs px-2 py-1 bg-muted rounded-full cursor-pointer"
+            >"Design inspiration websites"</button
           >
-          <span class="text-xs px-2 py-1 bg-muted rounded-full"
-            >"Productivity tools"</span
+          <button
+            onclick={() => searchBookmarks("Productivity tools")}
+            class="text-xs px-2 py-1 bg-muted rounded-full"
+            >"Productivity tools"</button
           >
         </div>
       </div>

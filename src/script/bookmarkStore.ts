@@ -8,6 +8,7 @@ export const searchResult = writable<any[]>([]);
 export const isSearching = writable(false);
 export const modelProgress = writable(0);
 export const searchStatus = writable("");
+export const searchQuery = writable("");
 export const activeCategory = writable("");
 
 // Create a Web Worker for search operations
@@ -93,7 +94,7 @@ export async function searchBookmarks(query: string) {
   isSearching.set(true);
   modelProgress.set(0);
   searchStatus.set("Starting search...");
-
+  searchQuery.set(query);
   // Send the search task to the worker
   searchWorker.postMessage({
     query,

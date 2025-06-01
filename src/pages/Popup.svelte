@@ -194,7 +194,7 @@
         Sidepanel
       </Button>
     </CardFooter>
-    <a
+    <!-- <a
       class="text-center my-1 flex items-center justify-center"
       href="https://www.buymeacoffee.com/rin2"
       target="_blank"
@@ -203,7 +203,7 @@
         alt="Buy Me A Coffee"
         style="height: 30px !important;width: 100px !important;"
       />
-    </a>
+    </a> -->
   </Card>
 </div>
 

@@ -87,21 +87,28 @@
       return;
     }
     isLoading = true;
-    progress = 0;
-    const interval = setInterval(() => {
-      progress += 5;
-      if (progress >= 40) {
-        clearInterval(interval);
-      }
-    }, 50);
-    trackEvent("button_click", {
-      button_id: "bookmark_button",
-      button_text: "Bookmark",
+    let status = await browser.bookmarks.create({
+      parentId: "1",
+      title: currentPage.title,
+      url: currentPage.url,
     });
-    await browser.runtime.sendMessage({
-      action: ACTION.BOOKMARK_URL,
-      data: currentPage,
-    });
+    console.log(status);
+    window.close();
+    // progress = 0;
+    // const interval = setInterval(() => {
+    //   progress += 5;
+    //   if (progress >= 40) {
+    //     clearInterval(interval);
+    //   }
+    // }, 50);
+    // trackEvent("button_click", {
+    //   button_id: "bookmark_button",
+    //   button_text: "Bookmark",
+    // });
+    // await browser.runtime.sendMessage({
+    //   action: ACTION.BOOKMARK_URL,
+    //   data: currentPage,
+    // });
   }
 
   // Extract domain from URL

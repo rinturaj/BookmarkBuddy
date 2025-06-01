@@ -32,16 +32,7 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
         ...book,
       };
       // Generate embedding for the bookmark
-      try {
-        const query = `title: ${bookmarkDetails.title} , category: ${
-          bookmarkDetails.details
-        } , category: ${bookmarkDetails.category} , url: ${
-          bookmarkDetails.url
-        } , createdAt: ${new Date(bookmarkDetails.dateAdded).toISOString()}`;
-        bookmarkDetails.embedding = await textEmbedder.embedText(query);
-      } catch (error) {
-        console.error("Error generating embedding:", error);
-      }
+      bookmarkDetails = await textEmbedder.detailsEmbeddeding(bookmarkDetails);
       // Store the bookmark
       let value = { [bookmarkDetails.url]: bookmarkDetails };
       await browser.storage.local.set(value);

@@ -8,10 +8,16 @@
     bookmarks,
     loadBookmarks,
     searchBookmarks,
+    searchQuery,
   } from "../../script/bookmarkStore";
-  import { get } from "svelte/store";
+  import { derived, get } from "svelte/store";
   import { trackEvent } from "../../script/analytics";
   let query = "";
+  function applyQuery(val: string) {
+    query = val;
+    // You can also trigger any search logic here
+  }
+  $: applyQuery($searchQuery);
 
   onMount(async () => {
     await loadBookmarks();
@@ -24,7 +30,6 @@
 
     // Start a new timer
     debounceTimeout = setTimeout(async () => {
-      const list = get(bookmarks);
       searchBookmarks(query);
       trackEvent("search", {
         id: "bookmark_search",

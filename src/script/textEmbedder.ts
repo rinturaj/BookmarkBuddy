@@ -16,6 +16,20 @@ class TextEmbedder {
     this.embeddingDimension = 512;
   }
 
+  async detailsEmbeddeding(bookmarkDetails: any) {
+    try {
+      const query = `title: ${bookmarkDetails.title} , category: ${
+        bookmarkDetails.details
+      } , category: ${bookmarkDetails.category} , url: ${
+        bookmarkDetails.url
+      } , createdAt: ${new Date(bookmarkDetails.dateAdded).toISOString()}`;
+      bookmarkDetails.embedding = await this.embedText(query);
+    } catch (error) {
+      console.error("Error generating embedding:", error);
+    }
+    return bookmarkDetails;
+  }
+
   async initialize(options: any) {
     const { useCache = true, onProgress } = options;
 

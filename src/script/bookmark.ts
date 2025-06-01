@@ -2,6 +2,7 @@ import browser from "webextension-polyfill";
 import { bookmarkFolders, getOrCreateFolder } from "./bookmark.util";
 import type { Bookmarks } from "webextension-polyfill";
 import { callAiapi } from "./ai";
+import textEmbedder from "./textEmbedder";
 
 interface BookmarkAnalysis {
   domain: string;
@@ -155,7 +156,8 @@ export class BookmarkManager {
         dateAdded: bookmark.dateAdded || Date.now(),
         id: bookmark.id,
       };
-      await browser.storage.local.set({ [bookmark.url]: metadata });
+      const details = await textEmbedder.detailsEmbeddeding(metadata);
+      await browser.storage.local.set({ [bookmark.url]: details });
     }
     await this.sendFloatingProgress("done", 0, bookmark.url);
     setTimeout(() => {

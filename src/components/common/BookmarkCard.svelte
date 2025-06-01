@@ -23,6 +23,8 @@
     details: string;
     links: string[];
     alternatives: string[];
+    category: string;
+    folder: string;
   }
 
   export let bookmarkDetails: BookmarkDetails;
@@ -121,27 +123,37 @@
       {/each}
     </ul>
   </div>
-  <div class="flex align-middle items-center justify-end gap-2">
+  <div
+    class="flex align-middle items-center align-middle justify-between gap-2"
+  >
+    <!-- location of the bookmark -->
+    <div>
+      <span class="text-xs p-2 bg-primary/20 rounded-full text-primary">
+        {bookmarkDetails?.category}
+      </span>
+    </div>
+
     <!-- <span class="text-xs text-muted-foreground">
       {new Date(bookmarkDetails?.dateAdded).toDateString()}</span> -->
-
-    <Separator orientation="vertical"></Separator>
-    <Button
-      variant="ghost"
-      size="icon"
-      href={bookmarkDetails?.url}
-      target="_blank"
-    >
-      <ExternalLink class="h-3.5 w-3.5 text-primary" />
-    </Button>
-    <Button
-      variant="ghost"
-      size="icon"
-      onclick={removeBookmark}
-      class="hover:bg-red-100 dark:hover:bg-red-900/20"
-    >
-      <Trash2 class="h-3.5 w-3.5 text-red-600" />
-    </Button>
+    <div>
+      <Separator orientation="vertical"></Separator>
+      <Button
+        variant="ghost"
+        size="icon"
+        href={bookmarkDetails?.url}
+        target="_blank"
+      >
+        <ExternalLink class="h-3.5 w-3.5 text-primary" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onclick={removeBookmark}
+        class="hover:bg-red-100 dark:hover:bg-red-900/20"
+      >
+        <Trash2 class="h-3.5 w-3.5 text-red-600" />
+      </Button>
+    </div>
   </div>
 </div>
 
