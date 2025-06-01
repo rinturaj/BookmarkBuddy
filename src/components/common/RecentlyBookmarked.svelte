@@ -53,10 +53,8 @@
 </script>
 
 {#if recents.length > 0}
-  <Separator></Separator>
-
   <div class="px-4 mb-4">
-    <h2 class="text-lg font-semibold mb-2">Recently Saved Bookmark</h2>
+    <h2 class="text-lg font-semibold mt-2 mb-2">Recently Saved Bookmark</h2>
     {#each recents as item, index}
       <div class="mb-2">
         <Card class="p-0">

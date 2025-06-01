@@ -1,8 +1,10 @@
-import { getCategory } from "./bookmark.util";
+import { bookmarkFolders, getCategory } from "./bookmark.util";
 
 export async function callAiapi(pageDetails: any) {
   let bookmarkBuddyFolder: any = await getCategory();
-  let bookmarkFolders = bookmarkBuddyFolder.folders.map((x: any) => x.title);
+  let folders = bookmarkBuddyFolder.folders.map((x: any) => x.title);
+  // Merge default bookmarkFolders with existing folders, removing duplicates
+  folders = Array.from(new Set([...folders, ...bookmarkFolders]));
   const apiUrl =
     "https://api.cloudflare.com/client/v4/accounts/bc3e2bd76b264a0fa43a0ecb31ce72e5/ai/run/@cf/meta/llama-3-8b-instruct";
   const apiKey = import.meta.env.VITE_API_KEY;
@@ -16,8 +18,8 @@ export async function callAiapi(pageDetails: any) {
      - One or more useful or important links related to the website
      - provide one or more alternative website which have the same use case as this website
      - A suitable category for the website, chosen from the following list:
-       [${bookmarkFolders.join(", ")}]
-     
+       [${folders.join(", ")}]
+      
      Respond in valid JSON format with the following fields:
      
      {

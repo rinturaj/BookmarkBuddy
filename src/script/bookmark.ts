@@ -128,20 +128,17 @@ export class BookmarkManager {
     await this.sendFloatingProgress("progress", 85, bookmark.url);
 
     try {
-      // Find or create folder for the category
-      const parentId = bookmark.parentId || "1"; // 1 is usually the "Bookmarks Bar"
-      const folderNode = await getOrCreateFolder(analysis.category, parentId);
+      const bookmarksBarId = "1";
+      const folderNode = await getOrCreateFolder(
+        analysis.category,
+        bookmarksBarId
+      );
       if (folderNode && bookmark.parentId !== folderNode.id) {
-        // Move bookmark to the appropriate folder
-        // Try to move the bookmark
         await browser.bookmarks.move(id, { parentId: folderNode.id });
       }
     } catch (error) {
-      // If the bookmark was removed, browser.bookmarks.move will throw an error
-      // Optionally, trigger any UI update or message to user
       await this.sendFloatingProgress("error", 0, bookmark.url);
       return;
-      // Abort further processing
     }
     // Store AI analysis metadata in browser.storage.local using the bookmark's URL as key
     if (bookmark.url) {

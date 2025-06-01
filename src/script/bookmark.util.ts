@@ -25,14 +25,14 @@ export async function createFolder(parentId: string, title: string) {
   });
 }
 
-async function createDefaultCategories(id: string | undefined) {
-  const folders = await bookmarkFolders.map(async (x) => {
-    const y = createFolder(id || "", x);
-    return y;
-  });
+// async function createDefaultCategories(id: string | undefined) {
+//   const folders = await bookmarkFolders.map(async (x) => {
+//     const y = createFolder(id || "", x);
+//     return y;
+//   });
 
-  return folders;
-}
+//   return folders;
+// }
 // Function to find a folder by title
 function findFolder(
   node: Browser.Bookmarks.BookmarkTreeNode,
@@ -53,28 +53,17 @@ export async function getCategory(): Promise<{
   parentId: string | undefined;
   folders: Browser.Bookmarks.BookmarkTreeNode[];
 }> {
-  let bookmarks = await Browser.bookmarks.getTree();
-
-  let bookmarkBuddy = findFolder(bookmarks[0], "BookmarkBuddy");
-
-  if (!bookmarkBuddy && !!bookmarks[0].children) {
-    bookmarkBuddy = await Browser.bookmarks.create({
-      parentId: undefined,
-      title: "BookmarkBuddy",
-    });
-  }
-
   // Get all subfolders under "BookmarkBuddy"
-  let children = await Browser.bookmarks.getChildren(bookmarkBuddy?.id || "");
+  let children = await Browser.bookmarks.getChildren("1");
   let folders = children.filter((item) => !!item);
 
-  if (folders.length <= 0) {
-    await createDefaultCategories(bookmarkBuddy?.id);
-    children = await Browser.bookmarks.getChildren(bookmarkBuddy?.id || "");
-    folders = children.filter((item) => !!item);
-  }
+  // if (folders.length <= 0) {
+  //   // await createDefaultCategories(bookmarkBuddy?.id);
+  //   children = await Browser.bookmarks.getChildren("1");
+  //   folders = children.filter((item) => !!item);
+  // }
 
-  return { parentId: bookmarkBuddy?.id, folders: folders.reverse() };
+  return { parentId: "1", folders: folders.reverse() };
 }
 
 export async function bookmarkUrl(url: string, title: any, category: string) {
@@ -83,10 +72,7 @@ export async function bookmarkUrl(url: string, title: any, category: string) {
   let bookmarkBuddy = findFolder(bookmarks[0], "BookmarkBuddy");
 
   // Find or create Categories folder inside BookmarkBuddy
-  let categoriesFolder: any = await getOrCreateFolder(
-    category,
-    bookmarkBuddy?.id
-  );
+  let categoriesFolder: any = await getOrCreateFolder(category, "1");
 
   // Find or create the domain folder inside Categories
   // let domainFolder: any = await getOrCreateFolder(domain, categoriesFolder.id);

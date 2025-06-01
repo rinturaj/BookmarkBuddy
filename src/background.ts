@@ -67,14 +67,19 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
 });
 // Create context menu when the extension is installed
 browser.runtime.onInstalled.addListener(async () => {
-  browser.contextMenus.create({
-    id: "sendTextToExtension",
-    title: "Note selected text in Buddy",
-    contexts: ["selection"],
-  });
+  // browser.contextMenus.create({
+  //   id: "sendTextToExtension",
+  //   title: "Note selected text in Buddy",
+  //   contexts: ["selection"],
+  // });
   browser.contextMenus.create({
     id: "bookMarkPage",
     title: "Bookmark this page with Buddy",
+    contexts: ["page"],
+  });
+  browser.contextMenus.create({
+    id: "search",
+    title: "Search bookmarks with Buddy",
     contexts: ["page"],
   });
 });
@@ -92,6 +97,11 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
     await browser.runtime.sendMessage({
       action: ACTION.BOOKMARK_URL,
       data: { url: tab?.url },
+    });
+  }
+  if (info.menuItemId === "search") {
+    chrome.tabs.create({
+      url: chrome.runtime.getURL("src/views/page/page.html"),
     });
   }
 });
