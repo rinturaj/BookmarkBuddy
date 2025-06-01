@@ -1,6 +1,6 @@
 {
   "name": "bookmarkbuddy",
-  "description": "Let AI organize and analyze your web bookmarks",
+  "description": "BookmarkBuddy is a browser extension that uses AI to organize and analyze your web bookmarks. Dont waste time searching for bookmarks again our semantic search will help you find the best bookmark effortlessly.",
   "private": true,
   "version": "1.2.0",
   "type": "module",

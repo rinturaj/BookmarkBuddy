@@ -1,6 +1,6 @@
 {
-  "name": "Bookmark Buddy",
-  "description": "Let AI organize and analyze your web bookmarks",
+  "name": "BookmarkBuddy | AI-Powered Bookmark Organizer",
+  "description": "AI-powered browser extension that organizes and analyzes bookmarks. Find your best bookmark instantly with smart semantic search.",
   "manifest_version": 3,
   "{{chrome}}.manifest_version": 3,
   "{{firefox}}.manifest_version": 2,
