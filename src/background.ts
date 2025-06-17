@@ -2,7 +2,7 @@ import browser from "webextension-polyfill";
 import { ACTION } from "./const";
 import textEmbedder from "./script/textEmbedder";
 import { callAiapi } from "./script/ai";
-import { bookmarkUrl, getFaviconFromUrl } from "./script/bookmark.util";
+import { bookmarkUrl } from "./script/bookmark.util";
 import { BookmarkManager } from "./script/bookmark";
 import OmniboxBookmarkSearch from "./script/omnibox";
 

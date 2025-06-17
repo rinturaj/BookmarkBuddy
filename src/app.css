@@ -77,3 +77,15 @@
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+.floating-progress-bar {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  /* width: 240px; */
+  min-width: 240px;
+  /* height: 18px; */
+  /* background: rgba(0, 0, 0, 0.15); */
+  z-index: 2147483647;
+  overflow: hidden;
+}

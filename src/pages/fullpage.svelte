@@ -14,17 +14,19 @@
   <Header></Header>
 </div>
 
-<div class="container flex w-full h-full">
-  <!-- Left section -->
-  <div class="flex-1 p-4 border-r border-gray-200">
-    <RecentlyBookmarked></RecentlyBookmarked>
+<div class="w-full h-full overflow-x-hidden">
+  <div class="container mx-auto max-w-screen-2xl px-4 h-full">
+    <div class="flex flex-col lg:flex-row w-full h-full">
+      <div class="w-full lg:w-1/2 xl:w-1/2 p-4 lg:border-r border-gray-200">
+        <RecentlyBookmarked></RecentlyBookmarked>
+        <ActiveTabs />
+        <SuggestionsSection />
+      </div>
 
-    <ActiveTabs />
-    <SuggestionsSection />
-  </div>
-  <!-- Right section -->
-  <div class="flex-1 p-4">
-    <SearchSection />
-    <BookMarkSection />
+      <div class="w-full lg:w-1/2 xl:w-1/2 p-4">
+        <SearchSection />
+        <BookMarkSection />
+      </div>
+    </div>
   </div>
 </div>

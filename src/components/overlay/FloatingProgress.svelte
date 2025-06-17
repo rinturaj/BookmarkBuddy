@@ -27,7 +27,6 @@
       Array.isArray(list) ? list : []
     );
   }
-
   onMount(async () => {
     await loadFloatingProgressList();
     // Listen for storage changes to update in real time
@@ -41,6 +40,38 @@
   });
 </script>
 
+<!-- <div
+  class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 bg-white p-4 rounded-lg shadow-lg border border-gray-200"
+>
+  <h3 class="font-bold text-sm mb-2">Test Floating Progress</h3>
+  <div class="flex gap-2 flex-wrap">
+    <button
+      on:click={() => testProgressState("in-progress")}
+      class="px-3 py-1.5 text-xs font-medium rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+    >
+      Test In Progress
+    </button>
+    <button
+      on:click={() => testProgressState("done")}
+      class="px-3 py-1.5 text-xs font-medium rounded bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
+    >
+      Test Done
+    </button>
+    <button
+      on:click={() => testProgressState("error")}
+      class="px-3 py-1.5 text-xs font-medium rounded bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
+    >
+      Test Error
+    </button>
+    <button
+      on:click={() => (floatingProgressList = [])}
+      class="px-3 py-1.5 text-xs font-medium rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+    >
+      Clear
+    </button>
+  </div>
+</div> -->
+
 {#each floatingProgressList as entry (entry.url)}
   <div class="floating-progress-bar">
     <div
@@ -53,49 +84,61 @@
         easing: quintInOut,
       }}
     >
-      <Card.Root class="bord shadow-lg max-w-sm ">
-        <Card.Header>
+      <div
+        class="bg-white rounded-lg border border-gray-200 shadow-lg max-w-sm p-4"
+      >
+        <div class="space-y-2">
           {#if entry.status === "error"}
-            <Card.Title
+            <div
               class="text-sm font-extrabold font-sans text-red-600 flex items-center gap-2"
             >
               <TerminalIcon size={18} /> Bookmark Removed
-            </Card.Title>
-            <Card.Description class="text-sm max-w-xs">
+            </div>
+            <p class="text-gray-600 text-sm max-w-xs">
               The bookmark was deleted before AI could finish. Bookmarking
               aborted.
-            </Card.Description>
+            </p>
           {:else if entry.status === "done"}
-            <Card.Title
+            <div
               class="text-sm font-extrabold font-sans text-green-600 flex items-center gap-2"
             >
               <BookmarkCheck size={18} /> Bookmark Saved!
-            </Card.Title>
-            <Card.Description class="text-sm">
+            </div>
+            <p class="text-gray-600 text-sm">
               Your page was successfully organized by AI. 🎉
-            </Card.Description>
+            </p>
           {:else}
-            <Card.Title class="text-sm font-extrabold font-sans">
+            <div class="text-sm font-extrabold font-sans text-gray-800">
               🚀 Bookmarking in Progress!
-            </Card.Title>
-            <Card.Description class="text-sm max-w-xs">
+            </div>
+            <p class="text-gray-600 text-sm max-w-xs">
               Our AI is working its magic ✨ to save your page. Sit tight, this
               will be quick! ⏳
-            </Card.Description>
+            </p>
           {/if}
-        </Card.Header>
-        <Card.Content>
+        </div>
+
+        <div class="mt-4">
           {#if entry.status === "error"}
-            <div class="text-red-500 text-xs mt-2">AI bookmarking aborted.</div>
+            <div class="text-red-500 text-xs">AI bookmarking aborted.</div>
           {:else if entry.status === "done"}
             <div class="max-w-xs">
               <BookmarkCard bookmarkDetails={entry.bookmarkDetails} />
             </div>
           {:else}
-            <Progress value={entry.progressValue} max={100} />
+            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div
+                class="bg-emerald-500 h-full rounded-full transition-all duration-300 ease-in-out"
+                style={`width: ${entry.progressValue}%`}
+                role="progressbar"
+                aria-valuenow={entry.progressValue}
+                aria-valuemin="0"
+                aria-valuemax="100"
+              ></div>
+            </div>
           {/if}
-        </Card.Content>
-      </Card.Root>
+        </div>
+      </div>
     </div>
   </div>
 {/each}
