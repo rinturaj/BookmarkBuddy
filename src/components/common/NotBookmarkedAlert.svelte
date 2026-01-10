@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Bookmark } from "lucide-svelte";
   import {
     Alert,
     AlertTitle,
@@ -8,8 +7,8 @@
   import Button from "../../lib/components/ui/button/button.svelte";
   import { flyScaleFade } from "../../script/animation";
 
-  import { fly, scale, fade } from "svelte/transition";
-  import { quintInOut, quintOut } from "svelte/easing";
+  import { fly } from "svelte/transition";
+  import { quintInOut } from "svelte/easing";
   export let onConfirm;
   export let onCancel;
 </script>

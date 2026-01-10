@@ -1,5 +1,6 @@
 <script lang="ts">
   let showAiAnalysis = true;
+  let showImport = false;
   import { ModeWatcher } from "mode-watcher";
   import ActiveTabs from "../components/common/ActiveTabs.svelte";
   import SuggestionsSection from "../components/common/SuggestionsSection.svelte";
@@ -13,6 +14,8 @@
   import { onMount } from "svelte";
   import { initAnalytics, trackPageView } from "../script/analytics";
   import RecentlyBookmarked from "../components/common/RecentlyBookmarked.svelte";
+  import { Github, Globe, Heart, FileUp } from "lucide-svelte";
+  import BulkImport from "../components/common/BulkImport.svelte";
 
   onMount(() => {
     try {
@@ -27,7 +30,38 @@
 <ModeWatcher />
 
 <div class={`flex flex-col h-full w-full  bg-background`}>
-  <Header></Header>
+  <Header {showImport}></Header>
+
+  <div
+    class="flex items-center justify-center gap-4 py-2 bg-secondary/10 border-b border-border/40 mb-2"
+  >
+    <a
+      href="https://github.com/rinturaj/BookmarkBuddy"
+      target="_blank"
+      class="flex items-center gap-1.5 text-[10px] text-muted-foreground/80 hover:text-primary transition-all duration-200 hover:scale-105"
+    >
+      <Github class="h-3 w-3" />
+      <span>Source Code</span>
+    </a>
+    <div class="h-3 w-[1px] bg-border/60"></div>
+    <a
+      href="https://bookmarkbuddy.pages.dev/"
+      target="_blank"
+      class="flex items-center gap-1.5 text-[10px] text-muted-foreground/80 hover:text-primary transition-all duration-200 hover:scale-105"
+    >
+      <Globe class="h-3 w-3" />
+      <span>Official Site</span>
+    </a>
+    <div class="h-3 w-[1px] bg-border/60"></div>
+    <a
+      href="https://github.com/sponsors/rinturaj"
+      target="_blank"
+      class="flex items-center gap-1.5 text-[10px] text-muted-foreground/80 hover:text-primary transition-all duration-200 hover:scale-105"
+    >
+      <Heart class="h-3 w-3 text-red-500" />
+      <span>Become a Sponsor</span>
+    </a>
+  </div>
 
   <button
     class="flex items-center gap-2 px-2 py-1 mb-1 text-sm font-medium rounded hover:bg-muted transition-colors"
@@ -56,6 +90,7 @@
     </svg>
     {showAiAnalysis ? "Hide AI Analysis" : "Show AI Analysis"}
   </button>
+
   <div
     id="ai-analysis-section"
     class="ai-analysis-wrapper"
@@ -70,6 +105,7 @@
       <AiAnalysis isSideBar={true} />
     {/if}
   </div>
+
   <div>
     <Tabs.Root
       value="bookmark"
@@ -78,10 +114,11 @@
         Browser.runtime.sendMessage({ action: ACTION.UPDATE_TABS });
       }}
     >
-      <Tabs.List class="grid w-full grid-cols-2 ">
+      <Tabs.List class="grid w-full grid-cols-3 ">
         <!-- <Tabs.Trigger value="thispage">🕵️‍♀️ Ai Assistant</Tabs.Trigger> -->
         <Tabs.Trigger value="bookmark">Bookmarks</Tabs.Trigger>
         <Tabs.Trigger value="active">Active Tabs</Tabs.Trigger>
+        <Tabs.Trigger value="import">Import</Tabs.Trigger>
       </Tabs.List>
 
       <Tabs.Content value="active">
@@ -93,6 +130,9 @@
 
         <BookMarkSection></BookMarkSection>
         <RecentlyBookmarked></RecentlyBookmarked>
+      </Tabs.Content>
+      <Tabs.Content value="import">
+        <BulkImport></BulkImport>
       </Tabs.Content>
     </Tabs.Root>
   </div>

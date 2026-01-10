@@ -149,3 +149,92 @@ export async function getAllUrlKeys(): Promise<string[]> {
 //   const data = await Browser.storage.local.get(urls);
 //   return data;
 // }
+
+export async function mergeDuplicateFolders() {
+  try {
+    const rootId = "1"; // Bookmarks Bar
+    const children = await Browser.bookmarks.getChildren(rootId);
+    
+    // Group folders by normalized title
+    const folderMap = new Map<string, Browser.Bookmarks.BookmarkTreeNode[]>();
+    
+    for (const child of children) {
+      if (!child.url) { // It's a folder
+        const normalizedTitle = child.title.trim().toLowerCase();
+        if (!folderMap.has(normalizedTitle)) {
+          folderMap.set(normalizedTitle, []);
+        }
+        folderMap.get(normalizedTitle)?.push(child);
+      }
+    }
+
+    // Merge duplicates
+    for (const [title, folders] of folderMap.entries()) {
+      if (folders.length > 1) {
+        // Sort by ID to keep the oldest or specifically choose one. 
+        // Usually keeping the first one found (oldest) is safe.
+        const targetFolder = folders[0];
+        const duplicates = folders.slice(1);
+
+        for (const duplicate of duplicates) {
+          // Move all children of duplicate to target
+          const subChildren = await Browser.bookmarks.getChildren(duplicate.id);
+          for (const subChild of subChildren) {
+             await Browser.bookmarks.move(subChild.id, { parentId: targetFolder.id });
+          }
+          // Remove the empty duplicate folder
+          await Browser.bookmarks.remove(duplicate.id);
+        }
+      }
+    }
+
+    // After merging, remove any folders that might be empty
+    await removeEmptyFolders();
+
+  } catch (error) {
+    console.error("Error merging duplicate folders:", error);
+  }
+}
+
+export async function removeEmptyFolders() {
+  try {
+     const rootId = "1";
+     const tree = await Browser.bookmarks.getSubTree(rootId);
+     if (tree && tree.length > 0) {
+        await removeEmptyRecursive(tree[0]);
+     }
+  } catch (e) {
+      console.error("Error removing empty folders", e);
+  }
+}
+
+async function removeEmptyRecursive(node: Browser.Bookmarks.BookmarkTreeNode) {
+    if (node.children) {
+        // Process children first (depth-first)
+        for (const child of node.children) {
+            await removeEmptyRecursive(child);
+        }
+        
+        // Re-fetch node/children to check if empty after processing descendants
+        // Note: 'node' here is stale, but we can check if it HAD children and if we deleted them?
+        // Actually, better to check current state. But 'node' is a snapshot.
+        // It's safer to just operate on what we knew was a folder.
+        // If it's a folder (no URL) and not the root (id "1" or "0"), check if we should delete.
+    }
+    
+    // Check if this node itself should be deleted
+    // We can't delete root folders "0", "1", '2' etc. usually.
+    if (!node.url && node.id !== "0" && node.id !== "1" && node.id !== "2") {
+        // Fetch fresh to see if it's truly empty now
+        try {
+            const children = await Browser.bookmarks.getChildren(node.id);
+            if (children.length === 0) {
+                await Browser.bookmarks.remove(node.id);
+            }
+        } catch (e) {
+            // Node might have been deleted or invalid
+        }
+    }
+}
+
+

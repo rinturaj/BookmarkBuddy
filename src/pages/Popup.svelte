@@ -4,7 +4,7 @@
 
   function flyFade(
     node: Element,
-    { x = 40, duration = 300, easing = quintInOut } = {}
+    { x = 40, duration = 300, easing = quintInOut } = {},
   ): TransitionConfig {
     return {
       duration,
@@ -25,6 +25,11 @@
     SearchCheckIcon,
     Sidebar,
     X,
+    Github,
+    Globe,
+    Heart,
+    EllipsisVertical,
+    Import,
   } from "lucide-svelte";
 
   import { fade, fly } from "svelte/transition";
@@ -39,6 +44,13 @@
     CardHeader,
     CardTitle,
   } from "$lib/components/ui/card";
+  import {
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarTrigger,
+  } from "$lib/components/ui/menubar";
   import AiAnalysis from "../components/common/AiAnalysis.svelte";
   import { onMount } from "svelte";
   import Browser from "webextension-polyfill";
@@ -47,6 +59,7 @@
   import SearchSection from "../components/common/SearchSection.svelte";
   import SearchResult from "../components/common/SearchResult.svelte";
   import { initAnalytics, trackPageView } from "../script/analytics";
+  import BulkImport from "../components/common/BulkImport.svelte";
 
   onMount(() => {
     try {
@@ -58,6 +71,7 @@
   });
 
   let toggleView = false;
+  let showImport = false;
 
   async function getCurrentTabDetails() {
     currentTab = await getCurrenttab();
@@ -128,11 +142,27 @@
     </CardHeader>
 
     <CardContent
-      class={!!toggleView
+      class={!!toggleView || showImport
         ? "p-0 pt-3 bg-white/50 pb-2 rounded-xl min-h-[200px]"
         : "p-3 pt-2"}
     >
-      {#if !toggleView}
+      {#if showImport}
+        <div
+          in:flyFade={{ x: 40, duration: 300 }}
+          out:flyFade={{ x: -40, duration: 200 }}
+          class="p-2"
+        >
+          <BulkImport />
+          <Button
+            variant="ghost"
+            size="sm"
+            class="mt-2 w-full"
+            onclick={() => (showImport = false)}
+          >
+            Cancel
+          </Button>
+        </div>
+      {:else if !toggleView}
         <div
           in:flyFade={{ x: 40, duration: 300 }}
           out:flyFade={{ x: -40, duration: 200 }}
@@ -150,60 +180,101 @@
       {/if}
     </CardContent>
 
-    <CardFooter class="flex justify-between pt-0">
-      <Button
-        onclick={() => {
-          chrome.tabs.create({
-            url: chrome.runtime.getURL("src/views/page/page.html"),
-          });
-        }}
-        variant="ghost"
-        size="sm"
-        class="hover:bg-primary/10 transition-colors duration-200"
+    <CardFooter class="p-0">
+      <Menubar
+        class="w-full border-none shadow-none rounded-none justify-evenly bg-transparent"
       >
-        <Fullscreen class="h-3.5  mr-1" />
-        More
-      </Button>
-      <Button
-        onclick={() => (toggleView = !toggleView)}
-        variant="ghost"
-        size="sm"
-        class="hover:bg-primary/10 transition-colors duration-200"
-      >
-        <Search class="h-3.5  mr-1" />
-        Search
-      </Button>
-      <Button
-        onclick={async () => {
-          let [tab] = await chrome.tabs.query({
-            active: true,
-            currentWindow: true,
-          });
+        <MenubarMenu>
+          <MenubarTrigger class="w-full justify-center">
+            <EllipsisVertical class="h-4 w-4 mr-2" />
+            More
+          </MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem
+              onclick={() => {
+                chrome.tabs.create({
+                  url: chrome.runtime.getURL("src/views/page/page.html"),
+                });
+              }}
+            >
+              <Fullscreen class="h-4 w-4 mr-2" />
+              Full Page
+            </MenubarItem>
+            <MenubarItem
+              onclick={async () => {
+                let [tab] = await chrome.tabs.query({
+                  active: true,
+                  currentWindow: true,
+                });
 
-          if (tab) {
-            await chrome.sidePanel.open({ tabId: tab?.id || 0 });
-            window.close();
-            return;
-          }
-        }}
-        variant="ghost"
-        size="sm"
-        class="hover:bg-primary/10 transition-colors duration-200"
-      >
-        <Sidebar class="h-3.5  mr-1" />
-        Sidepanel
-      </Button>
+                if (tab) {
+                  await chrome.sidePanel.open({ tabId: tab?.id || 0 });
+                  window.close();
+                  return;
+                }
+              }}
+            >
+              <Sidebar class="h-4 w-4 mr-2" />
+              Sidepanel
+            </MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+        <MenubarMenu>
+          <MenubarTrigger class="w-full justify-center">Import</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem
+              onclick={() => {
+                showImport = true;
+                toggleView = false;
+              }}
+            >
+              <Import class="h-4 w-4 mr-2" />
+              Bulk Import
+            </MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+        <MenubarMenu>
+          <MenubarTrigger class="w-full justify-center">Search</MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem onclick={() => (toggleView = !toggleView)}>
+              <Search class="h-4 w-4 mr-2" />
+              {toggleView ? "Show Analysis" : "Search"}
+            </MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>
     </CardFooter>
-    <!-- <a
-      class="text-center my-1 flex items-center justify-center"
-      href="https://www.buymeacoffee.com/rin2"
-      target="_blank"
-      ><img
-        src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-        alt="Buy Me A Coffee"
-        style="height: 30px !important;width: 100px !important;"
-      />
-    </a> -->
+
+    <div
+      class="flex items-center justify-center gap-4 py-2 bg-secondary/10 border-t border-border/40"
+    >
+      <a
+        href="https://github.com/rinturaj/BookmarkBuddy"
+        target="_blank"
+        class="flex items-center gap-1.5 text-[10px] text-muted-foreground/80 hover:text-primary transition-all duration-200 hover:scale-105"
+      >
+        <Github class="h-3 w-3" />
+        <span>Source Code</span>
+      </a>
+      <div class="h-3 w-[1px] bg-border/60"></div>
+      <a
+        href="https://bookmarkbuddy.pages.dev/"
+        target="_blank"
+        class="flex items-center gap-1.5 text-[10px] text-muted-foreground/80 hover:text-primary transition-all duration-200 hover:scale-105"
+      >
+        <Globe class="h-3 w-3" />
+        <span>Official Site</span>
+      </a>
+      <div class="h-3 w-[1px] bg-border/60"></div>
+      <a
+        href="https://github.com/sponsors/rinturaj"
+        target="_blank"
+        class="flex items-center gap-1.5 text-[10px] text-muted-foreground/80 hover:text-primary transition-all duration-200 hover:scale-105"
+      >
+        <Heart class="h-3 w-3 text-red-500" />
+        <span>Become a Sponsor</span>
+      </a>
+    </div>
   </Card>
 </div>
 

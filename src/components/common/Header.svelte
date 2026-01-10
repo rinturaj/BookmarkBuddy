@@ -5,9 +5,10 @@
     AvatarFallback,
     AvatarImage,
   } from "$lib/components/ui/avatar";
-  import { Moon, Sun } from "lucide-svelte";
+  import { FileDown, FileUp, Moon, Sun } from "lucide-svelte";
   import Button from "../../lib/components/ui/button/button.svelte";
   import iconLogo from "../../../static/icon_transperent.png";
+  export let showImport: boolean = false;
 </script>
 
 <div class="flex items-center justify-between p-4 border-b">
