@@ -28,7 +28,7 @@
     </a>
     <div class="h-4 w-[1px] bg-border/60"></div>
     <a
-      href="https://bookmarkbuddy.pages.dev/"
+      href="https://bookmarkbuddy.site"
       target="_blank"
       class="flex items-center gap-1.5 text-sm text-muted-foreground/80 hover:text-primary transition-all duration-200 hover:scale-105"
     >
